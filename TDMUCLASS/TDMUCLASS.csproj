@@ -46,6 +46,12 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="PagedList, Version=1.17.0.0, Culture=neutral, PublicKeyToken=abbb863e9397c5e1, processorArchitecture=MSIL">
+      <HintPath>..\packages\PagedList.1.17.0.0\lib\net40\PagedList.dll</HintPath>
+    </Reference>
+    <Reference Include="PagedList.Mvc, Version=4.5.0.0, Culture=neutral, PublicKeyToken=abbb863e9397c5e1, processorArchitecture=MSIL">
+      <HintPath>..\packages\PagedList.Mvc.4.5.0.0\lib\net40\PagedList.Mvc.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.Linq" />
@@ -121,6 +127,9 @@
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="Areas\Admin\AdminAreaRegistration.cs" />
+    <Compile Include="Areas\Admin\Controllers\AdminController.cs" />
+    <Compile Include="Areas\NhanVien\NhanVienAreaRegistration.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\TDMUCLASSController.cs" />
     <Compile Include="Global.asax.cs">
@@ -152,8 +161,10 @@
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\bootstrap.rtl.css" />
     <Content Include="Content\bootstrap.rtl.min.css" />
+    <Content Include="Content\PagedList.css" />
     <Content Include="cssAccount\styleAccount.css" />
     <Content Include="css\bootstrap.min.css" />
+    <Content Include="css\styleTinTuc.css" />
     <Content Include="css\style.css" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\material-icon\css\material-design-iconic-font.css" />
@@ -177,17 +188,22 @@
     <Content Include="fonts\poppins\roboto-condensed-v16-latin-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
-    <Content Include="img\about.jpg" />
+    <Content Include="img\about.png" />
+    <Content Include="img\baocaosuco.png" />
     <Content Include="img\call-to-action.jpg" />
     <Content Include="img\carousel-1.jpg" />
     <Content Include="img\carousel-2.jpg" />
+    <Content Include="img\chaomung.png" />
+    <Content Include="img\chaomungGV.jpg" />
+    <Content Include="img\chaomungSV.jpg" />
+    <Content Include="img\datphong.png" />
     <Content Include="img\header.jpg" />
     <Content Include="img\header0.jpg" />
     <Content Include="img\header1.jpg" />
     <Content Include="img\header2.jpg" />
     <Content Include="img\header3.jpg" />
     <Content Include="img\header4.jpg" />
-    <Content Include="img\header5.png" />
+    <Content Include="img\header5.jpg" />
     <Content Include="img\icon-apartment.png" />
     <Content Include="img\icon-building.png" />
     <Content Include="img\icon-condominium.png" />
@@ -206,17 +222,31 @@
     <Content Include="img\property-4.jpg" />
     <Content Include="img\property-5.jpg" />
     <Content Include="img\property-6.jpg" />
+    <Content Include="img\quanlyhethong.png" />
     <Content Include="img\signin-image.jpg" />
     <Content Include="img\signup-image.jpg" />
     <Content Include="img\SIGNUP.png" />
-    <Content Include="img\team-1.jpg" />
-    <Content Include="img\team-2.jpg" />
-    <Content Include="img\team-3.jpg" />
-    <Content Include="img\team-4.jpg" />
+    <Content Include="img\GV02.jpg" />
+    <Content Include="img\GV01.jpg" />
+    <Content Include="img\SV01.jpg" />
+    <Content Include="img\SV02.jpg" />
     <Content Include="img\testimonial-1.jpg" />
     <Content Include="img\testimonial-2.jpg" />
     <Content Include="img\testimonial-3.jpg" />
     <Content Include="img\testimonial-4.jpg" />
+    <Content Include="img\thoikhoabieu.png" />
+    <Content Include="img\tin1.jpg" />
+    <Content Include="img\tin10.jpg" />
+    <Content Include="img\tin3.jpg" />
+    <Content Include="img\tin4.jpg" />
+    <Content Include="img\tin5.jpg" />
+    <Content Include="img\tin6.jpg" />
+    <Content Include="img\tin7.jpg" />
+    <Content Include="img\tin8.jpg" />
+    <Content Include="img\tin9.jpg" />
+    <Content Include="img\user.png" />
+    <Content Include="img\userGV.png" />
+    <Content Include="img\userSV.png" />
     <Content Include="jsAccount\main.js" />
     <Content Include="js\main.js" />
     <Content Include="lib\animate\animate.css" />
@@ -244,11 +274,6 @@
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="lib\owlcarousel\LICENSE" />
-    <Content Include="Models\dbTDMUCLASS.dbml">
-      <Generator>MSLinqToSQLGenerator</Generator>
-      <LastGenOutput>dbTDMUCLASS.designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </Content>
     <Content Include="fonts\material-icon\fonts\Material-Design-Iconic-Font.eot" />
     <Content Include="fonts\material-icon\fonts\Material-Design-Iconic-Font.ttf" />
     <Content Include="fonts\material-icon\fonts\Material-Design-Iconic-Font.woff" />
@@ -318,6 +343,15 @@
     <Content Include="fonts\poppins\roboto-condensed-v16-latin-regular.woff" />
     <Content Include="fonts\poppins\roboto-condensed-v16-latin-regular.woff2" />
     <Content Include="cssAccount\styleAccount.css.map" />
+    <Content Include="Areas\Admin\Views\web.config" />
+    <Content Include="Areas\NhanVien\Views\web.config" />
+    <Content Include="Areas\Admin\Views\Shared\_LayoutAdmin.cshtml" />
+    <Content Include="Areas\Admin\Views\Admin\Home.cshtml" />
+    <Content Include="Models\dbTDMUCLASS.dbml">
+      <Generator>MSLinqToSQLGenerator</Generator>
+      <LastGenOutput>dbTDMUCLASS.designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </Content>
     <None Include="Models\dbTDMUCLASS.dbml.layout">
       <DependentUpon>dbTDMUCLASS.dbml</DependentUpon>
     </None>
@@ -345,7 +379,6 @@
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_LayoutUser.cshtml" />
-    <Content Include="Views\TDMUCLASS\Index.cshtml" />
     <Content Include="scss\bootstrap.scss" />
     <Content Include="scss\bootstrap\scss\bootstrap-grid.scss" />
     <Content Include="scss\bootstrap\scss\bootstrap-reboot.scss" />
@@ -430,24 +463,34 @@
     <Content Include="scss\bootstrap\scss\_variables.scss" />
     <Content Include="Views\Shared\NavPartial.cshtml" />
     <Content Include="Views\Shared\HeaderPartial.cshtml" />
-    <Content Include="Views\Shared\SearchPartial.cshtml" />
+    <Content Include="Views\Shared\DatPhongPartial.cshtml" />
     <Content Include="Views\Shared\CategoryPartial.cshtml" />
     <Content Include="Views\Shared\AboutPartial.cshtml" />
     <Content Include="Views\Shared\FooterPartial.cshtml" />
     <Content Include="Views\Shared\_LayoutAccount.cshtml" />
     <Content Include="Views\Account\Login.cshtml" />
-    <Content Include="Views\Account\ViewStudent.cshtml" />
+    <Content Include="Views\Account\.cshtml" />
     <Content Include="Views\Shared\_LayoutStudent.cshtml" />
     <Content Include="Views\Account\Error.cshtml" />
     <Content Include="Views\Shared\_LayoutTeacher.cshtml" />
-    <Content Include="Views\Shared\_LayoutAdmin.cshtml" />
-    <Content Include="Views\Shared\_LayoutStaff.cshtml" />
-    <Content Include="Views\Account\ViewTeacher.cshtml" />
     <Content Include="Views\Account\ViewAdmin.cshtml" />
     <Content Include="Views\Account\ViewStaff.cshtml" />
+    <Content Include="Views\Shared\NavPartialUserSV.cshtml" />
+    <Content Include="Views\Shared\GioiThieuPartial.cshtml" />
+    <Content Include="Views\TDMUCLASS\Home.cshtml" />
+    <Content Include="Views\Shared\FooterPartialUser.cshtml" />
+    <Content Include="Views\Shared\TinTucPartial.cshtml" />
+    <Content Include="Views\Shared\NavPartialUserGV.cshtml" />
+    <Content Include="Views\Shared\_LayoutShared.cshtml" />
+    <Content Include="Views\Account\DatPhong.cshtml" />
+    <Content Include="Views\Account\Home.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Areas\Admin\Data\" />
+    <Folder Include="Areas\NhanVien\Controllers\" />
+    <Folder Include="Areas\NhanVien\Data\" />
+    <Folder Include="Areas\NhanVien\Views\Shared\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap.rtl.min.css.map" />

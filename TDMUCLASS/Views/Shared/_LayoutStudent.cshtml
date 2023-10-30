@@ -31,31 +31,46 @@
 
     <!-- Template Stylesheet -->
     <link href="~/css/style.css" rel="stylesheet">
+    <style>
+        .thongbao-container {
+            position: relative;
+            
+        }
 
+        .thongbao {
+            padding-top: 10px;
+            text-align: center;
+            z-index: 100;
+            border: hidden;
+            width: 350px;
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+    </style>
 </head>
 
 
 <body>
     <div class="container-xxl bg-white p-0">
         <!-- Nav -->
-        @Html.Action("NavPartial", "TDMUCLASS")
-        <!-- Header -->
-        @Html.Action("HeaderPartial", "TDMUCLASS")
-        <!-- Search -->
-        @Html.Action("SearchPartial", "TDMUCLASS")
-        <!-- Category -->
-        @Html.Action("CategoryPartial", "TDMUCLASS")
-        <!-- About -->
-        @Html.Action("AboutPartial", "TDMUCLASS")
+        @Html.Action("NavPartialUserSV", "TDMUCLASS")
+        <!-- ChaoMung -->
+        <div class="thongbao-container">
+            <!-- Body -->
+            @RenderBody()
+            <div id="thongbao" class="alert alert-success thongbao" style="display: none;">
+                <i class="fa-solid fa-check fa-2xl" style="color: #00e61b;"></i> <br /> Đã đặt phòng thành công. <br />Vui lòng kiểm tra tình trạng đặt phòng trong lịch sử đặt phòng!
+            </div>
+        </div>
 
-        <!-- Body -->
-        @RenderBody()
-
-        <!-- Footer -->
-        @Html.Action("FooterPartial", "TDMUCLASS")
         <!-- Back to Top -->
         <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
     </div>
+    <!-- Footer -->
+    @Html.Action("FooterPartialUser", "TDMUCLASS")
 
 
 
@@ -71,3 +86,8 @@
     <script src="~/js/main.js"></script>
 </body>
 </html>
+<script>
+    function tailai() {
+        location.reload();
+    }
+</script>

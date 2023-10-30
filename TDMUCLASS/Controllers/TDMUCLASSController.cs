@@ -18,9 +18,24 @@ namespace TDMUCLASS.Controllers
             connection = "Data Source=LAPTOP-SD6JFUCG\\MSSQLSERVER01;Initial Catalog=TDMUCLASS;Integrated Security=True";
             db = new dbTDMUCLASSDataContext(connection);
         }
+
+
+
         // GET: TDMUCLASS
 
         public ActionResult NavPartial()
+        {
+            return PartialView();
+        }
+        public ActionResult NavPartialUserSV()
+        {
+            return PartialView();
+        }
+        public ActionResult NavPartialUserGV()
+        {
+            return PartialView();
+        }
+        public ActionResult ChaoMungPartial()
         {
             return PartialView();
         }
@@ -28,7 +43,11 @@ namespace TDMUCLASS.Controllers
         {
             return PartialView();
         }
-        public ActionResult SearchPartial()
+        public ActionResult GioiThieuPartial()
+        {
+            return PartialView();
+        }
+        public ActionResult DatPhongPartial()
         {
             var viewModel = new DayHocPhongHoc
             {
@@ -48,13 +67,28 @@ namespace TDMUCLASS.Controllers
         {
             return PartialView();
         }
-        public ActionResult Index()
+        public ActionResult Home()
         {
             return View();
         }
         public ActionResult FooterPartial()
         {
             return PartialView();
+        }
+        public ActionResult FooterPartialUser()
+        {
+            return PartialView();
+        }
+
+        
+        private List<TINTUC> LayTinMoi(int count)
+        {
+            return db.TINTUCs.OrderByDescending(a => a.NgayDang).Take(count).ToList();
+        }
+        public ActionResult TinTucPartial()
+        {
+            var listTinMoi = LayTinMoi(8);
+            return PartialView(listTinMoi);
         }
     }
 }

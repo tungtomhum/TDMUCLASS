@@ -1,0 +1,120 @@
+﻿<style>
+    /* CSS cho phần Giới Thiệu */
+    .gioi-thieu-container {
+        padding: 50px 0;
+        text-align: center;
+    }
+
+    .gioi-thieu-title {
+        font-size: 34px;
+        font-weight: 900;
+        margin-bottom: 20px;
+        text-transform: uppercase;
+    }
+
+    .gioi-thieu-text {
+        font-size: 18px;
+        max-width: 90%;
+        margin: 0 auto;
+        text-align: justify;
+        padding: 20px;
+    }
+
+    /* CSS cho phần danh sách chức năng */
+    .chuc-nang-list {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .chuc-nang-item {
+        width: 90%;
+        margin: 10px;
+        background-color: rgb(239, 253, 245);
+    }
+    .icon img{
+        width: 100px;
+        height: 100px;
+    }
+    
+</style>
+
+<div class="gioi-thieu-container" id="gioithieu">
+    <div>
+        <h1 class="gioi-thieu-title">Giới Thiệu</h1>
+        <p class="gioi-thieu-text">
+            Chào mừng bạn đến với hệ thống TDMUCLASS - một nền tảng quản lý phòng học và trang thiết bị tiên tiến giúp đơn giản hóa quá trình quản lý và sử dụng tài nguyên giáo dục tại Trường Đại học Thủ Dầu Một.
+        </p>
+    </div>
+
+    <div class="chuc-nang-list">
+        <div class="chuc-nang-item wow fadeInUp" data-wow-delay="0.1s">
+            <a class="cat-item d-block bg-light rounded p-4" href="">
+                <div class="rounded p-4">
+                    <div class="icon mb-4">
+                        <img class="img-fluid" src="~/img/datphong.png" alt="Icon Apartment">
+                    </div>
+                    <h6 class="chuc-nang-item-title">Đặt Phòng Học</h6>
+                    <span class="chuc-nang-item-text">
+                        Giáo viên và sinh viên có thể dễ dàng đặt phòng học cho các buổi học, buổi họp. Hệ thống sẽ hiển thị sẵn sàng tình trạng của các phòng và giúp bạn dễ dàng xác định phòng phù hợp với nhu cầu của bạn.
+                    </span>
+                </div>
+            </a>
+        </div>
+        <div class="chuc-nang-item wow fadeInUp" data-wow-delay="0.3s">
+            <a class="cat-item d-block bg-light rounded p-4" href="">   
+                <div class="rounded p-4">
+                    <div class="icon mb-4">
+                        <img class="img-fluid" src="~/img/baocaosuco.png" alt="Icon Villa">
+                    </div>
+                    <h6 class="chuc-nang-item-title">Báo Cáo Sự Cố Trang Thiết Bị</h6>
+                    <span class="chuc-nang-item-text">
+                        Nếu bạn gặp sự cố về trang thiết bị trong phòng học, TDMUCLASS cho phép bạn báo cáo sự cố một cách nhanh chóng. Chúng tôi sẽ giải quyết sự cố đảm bảo môi trường học tập luôn tốt và hiệu quả.
+                    </span>
+                </div>
+            </a>
+        </div>
+        <div class="chuc-nang-item wow fadeInUp" data-wow-delay="0.1s">
+            <a class="cat-item d-block bg-light rounded p-4" href="">
+                <div class="rounded p-4">
+                    <div class="icon mb-4">
+                        <img class="img-fluid" src="~/img/thoikhoabieu.png" alt="Icon Building">
+                    </div>
+                    <h6 class="chuc-nang-item-title">Xem Thời Khóa Biểu</h6>
+                    <span class="chuc-nang-item-text">
+                        TDMUCLASS cung cấp thời khóa biểu linh hoạt cho cả giáo viên và sinh viên. Bạn có thể dễ dàng truy cập thời khóa biểu của mình, kiểm tra lịch học và quản lý thời gian một cách hiệu quả.
+                    </span>
+                </div>
+            </a>
+        </div>
+        <div class="chuc-nang-item wow fadeInUp" data-wow-delay="0.3s">
+            <a class="cat-item d-block bg-light rounded p-4" href="">
+                <div class="rounded p-4">
+                    <div class="icon mb-4">
+                        <img class="img-fluid" src="~/img/quanlyhethong.png" alt="Icon Townhouse">
+                    </div>
+                    <h6 class="chuc-nang-item-title">Quản Lý Trang Thiết Bị và Phòng Học</h6>
+                    <span class="chuc-nang-item-text">
+                        Hệ thống cho phép các quản lý quản lý tài nguyên trang thiết bị và phòng học một cách dễ dàng. Bạn có thể cập nhật thông tin, thời gian sử dụng, và theo dõi tình trạng của các tài nguyên này.
+                    </span>
+                </div>
+            </a>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Lắng nghe sự kiện click trên liên kết "GioiThieu" trong navbar
+    $(document).ready(function () {
+        $('a[href="#gioithieu"]').click(function (e) {
+            e.preventDefault(); // Ngăn chặn mặc định của liên kết
+            var target = $('#gioithieu');
+            if (target.length) {
+                // Cuộn trang đến phần "Gioi Thieu" và đảm bảo nó hiển thị ngay dưới navbar
+                $('html, body').animate({
+                    scrollTop: target.offset().top - $('.navbar').outerHeight()
+                }, 100);
+            }
+        });
+    });
+</script>

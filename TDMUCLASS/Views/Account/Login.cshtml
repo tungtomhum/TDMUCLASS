@@ -50,7 +50,7 @@
     <div class="container">
         <div class="signin-content">
             <div class="signin-image">
-                <figure><a href="~/TDMUCLASS/Index"><img src="~/img/LOGIN.png" alt="sing up image"></a></figure>
+                <figure><a href="~/TDMUCLASS/Home"><img src="~/img/LOGIN.png" alt="sing up image"></a></figure>
                 <a href="~/TaiKhoan/DangKy" class="signup-image-link">Create an account</a>
             </div>
 
@@ -60,7 +60,7 @@
                 {
                     <div class="alert alert-danger" style="color: red; padding-bottom: 10px;">@ViewBag.ErrorMessage</div>
                 }
-                <form action="Verify" method="POST" class="register-form" id="login-form">
+                <form action="Home" method="POST" class="register-form" id="login-form">
                     <div class="form-group">
                         <label for="your_name"><i class="zmdi zmdi-account material-icons-name"></i></label>
                         <input type="text" name="your_name" id="your_name" placeholder="Your Name" />
@@ -81,8 +81,6 @@
                 <div class="social-login">
                     <span class="social-label">Or login with</span>
                     <ul class="socials">
-                        <li><a href="#"><i class="display-flex-center zmdi zmdi-facebook"></i></a></li>
-                        <li><a href="#"><i class="display-flex-center zmdi zmdi-twitter"></i></a></li>
                         <li><a href="#"><i class="display-flex-center zmdi zmdi-google"></i></a></li>
                     </ul>
                 </div>
@@ -107,6 +105,33 @@
             } else {
                 icon.classList.remove("zmdi-eye");
                 icon.classList.add("zmdi-eye-off");
+            }
+        });
+    });
+    document.addEventListener("DOMContentLoaded", function () {
+        const passwordField = document.getElementById("your_pass");
+        const togglePasswordButton = document.getElementById("toggle-password");
+        const rememberMeCheckbox = document.getElementById("remember-me");
+        const usernameField = document.getElementById("your_name");
+
+        // Kiểm tra xem trạng thái đăng nhập đã được lưu trữ hay chưa
+        const savedUsername = localStorage.getItem("username");
+        const savedRememberMe = localStorage.getItem("rememberMe");
+
+        if (savedUsername && savedRememberMe === "true") {
+            usernameField.value = savedUsername;
+            rememberMeCheckbox.checked = true;
+        }
+
+        togglePasswordButton.addEventListener("click", function () {
+            // Lưu trạng thái đăng nhập và thông tin người dùng đã đăng nhập
+            const isRememberMe = rememberMeCheckbox.checked;
+            if (isRememberMe) {
+                localStorage.setItem("username", usernameField.value);
+                localStorage.setItem("rememberMe", "true");
+            } else {
+                localStorage.removeItem("username");
+                localStorage.removeItem("rememberMe");
             }
         });
     });

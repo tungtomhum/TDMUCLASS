@@ -5,30 +5,41 @@
 </style>
 <!-- Navbar Start -->
 <div class="container-fluid nav-bar bg-transparent">
-    <nav class="navbar navbar-expand-lg bg-white navbar-light py-1.2 px-4">
-        <a href="~/TDMUCLASS/index" class="navbar-brand d-flex align-items-center text-center">
-            <img class="img-fluid" src="~/img/logo-nav .png" alt="Icon" style="width: 350px; height: 80px;">
+    <nav class="navbar navbar-expand-lg bg-white navbar-light py-0 px-4">
+        <a href="" onclick="tailai" class="navbar-brand d-flex align-items-center text-center">
+            <div>
+                <img class="img-fluid" src="~/img/logo-nav .png" alt="Icon" style="width: 350px; height: 80px;">
+            </div>
         </a>
         <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarCollapse">
             <div class="navbar-nav ms-auto">
-                <a href="~/TDMUCLASS/index" class="nav-item nav-link active">Trang chủ</a>
-                <a href="about.html" class="nav-item nav-link">ĐẶT PHÒNG</a>
-                <div class="nav-item dropdown">
-                    <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">BÁO CÁO SỰ CỐ</a>
-                    <div class="dropdown-menu rounded-0 m-0">
-                        <a href="property-list.html" class="dropdown-item">Property List</a>
-                        <a href="property-type.html" class="dropdown-item">Property Type</a>
-                        <a href="property-agent.html" class="dropdown-item">Property Agent</a>
-                    </div>
-                </div>
-                <a href="contact.html" class="nav-item nav-link">Thời khóa biểu</a>
-                <a href="~/Account/Login" class="btn btn-primary px-3">Login <i class="fa-solid fa-right-to-bracket fa-lg" style="margin:5px 0px 0px 10px;"></i></a>
-
+                <a href="" onclick="tailai" class="nav-item nav-link active">Trang chủ</a>
+                <a href="#gioithieu" class="nav-item nav-link">Giới thiệu</a>
+                <a href="#tintuc" class="nav-item nav-link">Tin Tức</a>
+                <a href="~/Account/Login" class="btn btn-primary px-3">Đăng nhập <i class="fa-solid fa-right-to-bracket fa-lg" style="margin:5px 0px 0px 10px;"></i></a>
             </div>
         </div>
     </nav>
 </div>
 <!-- Navbar End -->
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const navLinks = document.querySelectorAll(".navbar-nav .nav-link");
+
+        navLinks.forEach(function (link) {
+            link.addEventListener("click", function () {
+                // Loại bỏ lớp "active" từ tất cả các liên kết
+                navLinks.forEach(function (navLink) {
+                    navLink.classList.remove("active");
+                });
+
+                // Thêm lớp "active" cho liên kết được chọn
+                link.classList.add("active");
+            });
+        });
+    });
+</script>

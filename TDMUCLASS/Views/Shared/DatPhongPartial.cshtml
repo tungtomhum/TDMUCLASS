@@ -1,0 +1,209 @@
+﻿@model TDMUCLASS.Models.DayHocPhongHoc
+
+<style>
+    .formdp {
+        border: 1px dotted rgb(50, 244, 104);
+        border-radius: 5%;
+        background-color: rgb(239, 253, 245);
+    }
+
+    .khoitt {
+        padding: 30px;
+    }
+
+        .khoitt label {
+            padding-top: 20px;
+        }
+</style>
+
+<!-- Search Start -->
+<div class="container-fluid bg-primary mb-5 wow fadeIn" data-wow-delay="0.1s" style="padding: 35px;" id="datphong">
+    <div class="container" style="top: 350px; height: 100px;">
+        <h2>ĐẶT PHÒNG HỌC</h2>
+        <form action="/DatPhong" method="post">
+            <!-- Thay đổi action thành "/DatPhong" -->
+            <div class="row g-2">
+                <div class="col-md-10">
+                    <div class="row g-2">
+                        <div class="col-md-6">
+                            <select class="form-select border-0 py-3" id="maDayHocSelect">
+                                <option selected>Chọn dãy học... </option>
+                                @foreach (var dayhoc in Model.DayHocData)
+                                {
+                                    <option value="@dayhoc.MaDayHoc">@dayhoc.MaDayHoc</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <select class="form-select border-0 py-3" id="maPhongHocSelect" disabled>
+                                <option selected value="">Chọn phòng học... </option>
+                                @foreach (var phonghoc in Model.PhongHocData)
+                                {
+                                    <option value="@phonghoc.MaPhongHoc" data-madayhoc="@phonghoc.MaDayHoc" data-trangthai="@phonghoc.TrangThai">@phonghoc.MaPhongHoc</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <button class="btn btn-dark border-0 w-100 py-3" id="searchButton">Search</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<!-- Search End -->
+
+
+<!-- Form for room booking -->
+<div class="container formdp" id="bookingForm" style="display: none; width: 90%;">
+    <h2 style="padding:40px 0px 0px 20px; text-transform: uppercase;">Thông tin đặt phòng</h2>
+    <div class="row">
+        <div class="col-md-6">
+            <!-- Phần 1 - Thông tin người đặt phòng -->
+            <div class="mb-3 khoitt">
+                @if (Session["loaitaikhoan"] != null)
+                {
+                    if (Session["loaitaikhoan"].ToString() == "SV")
+                    {
+                        <label for="maSinhVien">Mã Sinh Viên:</label>
+                        <input type="text" class="form-control" id="maSinhVien" name="maSinhVien" value="@Session["maSinhVienOrGiangVien"].ToString()" disabled>
+
+                        <label for="tenHocVien">Tên Sinh Viên:</label>
+                        <input type="text" class="form-control" id="tenHocVien" name="tenHocVien" value="@Session["tenHocVienOrGiangVien"].ToString()" disabled>
+                    }
+                    else if (Session["loaitaikhoan"].ToString() == "GV")
+                    {
+                        <label for="maGiangVien">Mã Giảng Viên:</label>
+                        <input type="text" class="form-control" id="maGiangVien" name="maGiangVien" value="@Session["maSinhVienOrGiangVien"].ToString()" disabled>
+
+                        <label for="tenGiangVien">Tên Giảng Viên:</label>
+                        <input type="text" class="form-control" id="tenGiangVien" name="tenGiangVien" value="@Session["tenHocVienOrGiangVien"].ToString()" disabled>
+                    }
+                }
+                <label for="moTa">Mô Tả:</label>
+                <textarea style="height: 150px;" class="form-control" id="moTa" name="moTa"></textarea>
+
+            </div>
+        </div>
+        <div class="col-md-6">
+            <!-- Phần 2 - Các thông tin khác -->
+            <div class="mb-3 khoitt">
+                <label for="maPhongHoc">Mã phòng học:</label>
+                <input type="text" class="form-control" name="maPhongHoc" id="selectedMaPhongHoc" disabled>
+
+                <label for="ngayDat">Ngày Đặt:</label>
+                <input type="datetime-local" class="form-control" id="ngayDat" name="ngayDat" value="@DateTime.Now.ToString("hh-mm-ss-yyyy-MM-dd")" required>
+
+                <label for="tietBatDau">Tiết Bắt Đầu:</label>
+                <select class="form-select" id="tietBatDau" name="tietBatDau">
+                    @for (int i = 1; i <= 10; i++)
+                    {
+                        <option value="@i">@i</option>
+                    }
+                </select>
+
+                <label for="tietKetThuc">Tiết Kết Thúc:</label>
+                <select class="form-select" id="tietKetThuc" name="tietKetThuc">
+                    @for (int i = 1; i <= 10; i++)
+                    {
+                        <option value="@i">@i</option>
+                    }
+                </select>
+
+                <label for="trangThai">Trạng thái xử lý:</label>
+                <input type="text" class="form-control" name="trangThai" value="Chờ xử lý">
+
+                <label for="quanLy">Mã Quản lý:</label>
+                <input type="text" class="form-control" name="maQuanLy" value="YourQuanLyIDHere">
+            </div>
+        </div>
+    </div>
+    <div class="col-md-12 text-end" style="padding: 0px 20px 40px 0px;">
+        <!-- Thay đổi thành text-end để căn chỉnh nút ở góc phải -->
+        <button type="submit" class="btn btn-primary">Đặt Phòng</button>
+        <button type="button" class="btn btn-secondary" id="cancelButton">Hủy</button>
+    </div>
+</div>
+
+
+<script>
+    $(document).ready(function () {
+        var bookingFormVisible = false; // Track if the booking form is visible
+
+        // Lắng nghe sự kiện thay đổi trên select "Dãy học"
+        $('#maDayHocSelect').change(function () {
+            var selectedMaDayHoc = $(this).val();
+            if (selectedMaDayHoc !== '') {
+                // Nếu đã chọn "MaDayHoc," thì mở chọn "Phòng học" và cập nhật danh sách "Phòng học" tương ứng
+                $('#maPhongHocSelect').prop('disabled', false);
+                $('#maPhongHocSelect option').hide();
+                $('#maPhongHocSelect option[data-madayhoc="' + selectedMaDayHoc + '"]').show();
+                // Chọn lựa chọn mặc định cho "Phòng học"
+                $('#maPhongHocSelect').val('');
+            } else {
+                // Nếu chưa chọn "MaDayHoc," thì vô hiệu hóa chọn "Phòng học" và đặt giá trị mặc định
+                $('#maPhongHocSelect').prop('disabled', true);
+                $('#maPhongHocSelect').val('');
+            }
+        });
+
+        // Lắng nghe sự kiện click trên nút "Search"
+        $('#searchButton').click(function (e) {
+            e.preventDefault(); // Ngăn chặn gửi yêu cầu mặc định của nút "Search"
+
+            // Kiểm tra xem mã dãy học và mã phòng học đã được chọn
+            var selectedMaDayHoc = $('#maDayHocSelect').val();
+            var selectedMaPhongHoc = $('#maPhongHocSelect').val();
+            var selectedTrangThai = $('#maPhongHocSelect option:selected').data('trangthai');
+
+            if (selectedMaDayHoc !== '' && selectedMaPhongHoc !== '') {
+                if (selectedTrangThai === "Trống") {
+                    if (!bookingFormVisible) {
+                        // Hiện form đặt phòng
+                        $('#bookingForm').show();
+                        bookingFormVisible = true;
+                        $('#selectedMaPhongHoc').val(selectedMaPhongHoc);
+                    }
+                } else {
+                    // Phòng đang sử dụng, hiển thị thông báo
+                    alert('Phòng đang sử dụng. Vui lòng chọn phòng khác.');
+                    if (bookingFormVisible) {
+                        // Ẩn form nếu đã hiển thị trước đó
+                        $('#bookingForm').hide();
+                        bookingFormVisible = false;
+                    }
+                }
+            } else {
+                // Ngược lại, hiển thị thông báo hoặc thực hiện xử lý khác theo yêu cầu của bạn
+                alert('Vui lòng chọn mã dãy học và mã phòng học trước khi đặt phòng.');
+                if (bookingFormVisible) {
+                    // Ẩn form nếu đã hiển thị trước đó
+                    $('#bookingForm').hide();
+                    bookingFormVisible = false;
+                }
+            }
+        });
+    });
+    $(document).ready(function () {
+        // Lắng nghe sự kiện click trên nút "Hủy"
+        $('#cancelButton').click(function () {
+            // Ẩn form khi nhấn nút "Hủy"
+            $('#bookingForm').hide();
+        });
+    });
+    // Lắng nghe sự kiện click trên liên kết "DATPHONG" trong navbar
+    $(document).ready(function () {
+        $('a[href="#datphong"]').click(function (e) {
+            e.preventDefault(); // Ngăn chặn mặc định của liên kết
+            var target = $('#datphong');
+            if (target.length) {
+                // Cuộn trang đến phần "DATPHONG" và đảm bảo nó hiển thị ngay dưới navbar
+                $('html, body').animate({
+                    scrollTop: target.offset().top - $('.navbar').outerHeight()
+                }, 100);
+            }
+        });
+    });
+</script>
+

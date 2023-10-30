@@ -16,7 +16,7 @@ namespace TDMUCLASS
             routes.MapRoute(
                 name: "Default",
                 url: "{controller}/{action}/{id}",
-                defaults: new { controller = "TDMUCLASS", action = "Index", id = UrlParameter.Optional }
+                defaults: new { controller = "TDMUCLASS", action = "Home", id = UrlParameter.Optional }
             );
         }
     }
