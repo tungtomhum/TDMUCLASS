@@ -1,0 +1,107 @@
+﻿@model IEnumerable<TDMUCLASS.Models.DATPHONG>
+
+@{
+    ViewBag.Title = "Lịch sử đặt phòng";
+
+    if (Session["loaitaikhoan"] != null)
+    {
+        if (Session["loaitaikhoan"].ToString() == "SV")
+        {
+            Layout = "~/Views/Shared/_LayoutStudent.cshtml";
+        }
+        else if (Session["loaitaikhoan"].ToString() == "GV")
+        {
+            Layout = "~/Views/Shared/_LayoutTeacher.cshtml";
+        }
+        else
+        {
+            Layout = "~/Views/Shared/_LayoutShared.cshtml";
+        }
+    }
+    else
+    {
+        Layout = "~/Views/Shared/_LayoutShared.cshtml";
+    }
+
+    // Sort the data by NgayBD (start date)
+    var sortedModel = Model.OrderBy(item => item.TrangThai);
+}
+
+@* Xây dựn một helper tùy chỉnh để cắt độ dài chuỗi *@
+@helper Truncate(string s, int length)
+{
+    if (s.Length < length)
+    {
+        @s
+    }
+    else
+    {
+        @s.Substring(0, length)<text>...</text>
+    }
+}
+
+<style>
+    .noidung th,
+    .noidung td {
+        text-align: center;
+    }
+</style>
+
+<div style="padding:70px;">
+    <p class="btn btn-outline-light">
+        @Html.ActionLink("Trở lại", "DatPhong")
+    </p>
+    <h2 style="text-align:center;padding:20px;">LỊCH SỬ ĐẶT PHÒNG</h2>
+
+    <table class="table" style="height:auto;">
+        <tr class="noidung">
+            <th>
+                Mã phòng học
+            </th>
+            <th>
+                Ngày bắt đầu
+            </th>
+            <th>
+                Ngày kết thúc
+            </th>
+            <th>
+                Mô tả
+            </th>
+            <th>
+                Trạng thái
+            </th>
+            <th></th>
+        </tr>
+        @foreach (var item in sortedModel)
+        {
+            <tr style="height: 10px;"></tr>
+            <tr class="noidung" style="@(item.TrangThai == "Từ chối" ? "background-color: #ffdddd;" : (item.TrangThai == "Đã duyệt" ? "background-color: #c1f0c1;" : ""))">
+                <td>
+                    @Html.DisplayFor(modelItem => item.MaPhongHoc)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.NgayBD)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.NgayKT)
+                </td>
+                <td>
+                    @* Sử dụng helper để cắt MoTa lấy 70 ký tự *@
+                    @Html.Raw(Truncate(item.MoTa, 20).ToString())
+                </td>
+                <td style="font-weight: bold;">
+                    @Html.DisplayFor(modelItem => item.TrangThai)
+                </td>
+                <td>
+                    @if (item.TrangThai == "Chờ xử lý")
+                    {
+                        <a href="@Url.Action("Edit", new { id = item.MaDatPhong })" class="btn btn-warning" role="button">Cập nhật</a>
+                        <a href="@Url.Action("Delete", new { id = item.MaDatPhong })" class="btn btn-danger" role="button">Hủy</a>
+
+                    }
+
+                </td>
+            </tr>
+        }
+    </table>
+</div>

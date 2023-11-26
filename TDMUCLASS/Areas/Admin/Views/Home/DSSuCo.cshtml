@@ -1,0 +1,152 @@
+﻿
+@model IEnumerable<TDMUCLASS.Models.SUCOBAOTRI>
+
+@{
+    ViewBag.Title = "DSSuCo";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutHome.cshtml";
+    // Sort the data by NgayBD (start date)
+    var sortedModel = Model.OrderBy(item => item.TinhTrangXuLy);
+}
+@*Xây dựn một helper tùy chỉnh để cắt độ dài chuỗi*@
+@helper Truncate(string s, int length)
+{
+    if (s.Length < length)
+    {
+        @s
+    }
+    else
+    {
+        @s.Substring(0, length)<text>...</text>
+    }
+
+}
+<style>
+
+    #imagePreview {
+        position: relative;
+        padding-top: 20px;
+        max-width: 500px; /* Đặt chiều rộng tối đa của div */
+        overflow: hidden; /* Ẩn phần vượt quá kích thước của div */
+    }
+
+    #previewImage {
+        max-width: 100%; /* Đảm bảo ảnh không vượt quá chiều rộng của div */
+        height: auto; /* Để duy trì tỉ lệ khung hình */
+        display: block; /* Không để ảnh bị đẩy xuống dòng mới */
+        margin: 0 auto; /* Căn giữa ảnh trong div */
+    }
+</style>
+
+
+<main id="main" class="main">
+
+    <div class="pagetitle">
+        <h1>DANH SÁCH SỰ CỐ BẢO TRÌ</h1>
+        <nav>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="~/Admin/Home/Home">Admin</a></li>
+                <li class="breadcrumb-item">Home</li>
+                <li class="breadcrumb-item active">Danh sách Sự cố bảo trì</li>
+            </ol>
+        </nav>
+    </div><!-- End Page Title -->
+
+    <section class="section">
+        <div class="row">
+            <div class="col-lg-12">
+
+                <div class="card">
+                    <div class="card-body p-3">
+
+                        <!-- Table with stripped rows -->
+                        <table class="table datatable p-5">
+                            <thead>
+                                <tr>
+                                    <th>Mã phòng học</th>
+                                    <th>Mô tả sự cố</th>
+                                    <th data-type="date" data-format="YYYY/DD/MM">Thời gian báo cáo</th>
+                                    <th>Tên thiết bị</th>
+                                    <th>Trạng thái</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var suco in sortedModel)
+                                {
+                                    <tr>
+                                        <td>@suco.MaPhongHoc</td>
+                                        <td>@Html.Raw(Truncate(suco.MoTaSuCo, 10).ToString())</td>
+                                        <td>@suco.ThoiGianBaoCao</td>
+                                        <td>@suco.TenTrangThietBi</td>
+                                        <td>@suco.TinhTrangXuLy</td>
+                                        <td>
+                                            <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#modal-@suco.MaPhongHoc">
+                                                Xem chi tiết
+                                            </button>
+                                            <!-- Hien form thong tin -->
+                                            <div class="modal fade" id="modal-@suco.MaPhongHoc" tabindex="-1">
+                                                <div class="modal-dialog modal-dialog-centered">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="text-center">THÔNG TIN BÁO CÁO</h5>
+                                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <div>
+
+                                                                <!-- Nội dung hiện ở đây-->
+                                                                @if (!string.IsNullOrEmpty(suco.MaGiangVien))
+                                                                {
+                                                                    <p><strong>Mã giảng viên:</strong> @suco.MaGiangVien</p>
+                                                                    <p><strong>Họ tên giảng viên:</strong> @ViewBag.HoTenDictionary[suco.MaGiangVien]</p>
+                                                                }
+                                                                else if (!string.IsNullOrEmpty(suco.MaSinhVien))
+                                                                {
+                                                                    <p><strong>Mã sinh viên:</strong> @suco.MaSinhVien</p>
+                                                                    <p><strong>Họ tên sinh viên:</strong> @ViewBag.HoTenDictionary[suco.MaSinhVien]</p>
+                                                                }
+                                                                <p><strong>Mã phòng học:</strong> @suco.MaPhongHoc</p>
+                                                                <p><strong>Thời gian báo cáo:</strong> @suco.ThoiGianBaoCao</p>
+                                                                <p><strong>Mô tả:</strong> @suco.MoTaSuCo</p>
+                                                                <label for="hinhAnh">Ảnh sự cố:</label>
+                                                                <div id="imagePreview">
+                                                                    <img src="~/img/@suco.AnhSuCo" id="previewImage" alt="Ảnh xem trước">
+                                                                </div>
+                                                                <p><strong>Trạng thái:</strong> @suco.TinhTrangXuLy</p>
+
+
+                                                            </div>
+                                                        </div>
+                                                        <!-- Inside your modal -->
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Trở lại</button>
+                                                            @using (Html.BeginForm("UpdateTrangThaiRB", "Home", FormMethod.Post))
+                                                            {
+                                                                @Html.Hidden("masuco", suco.MaSuCoBaoTri)
+                                                                if (suco.TinhTrangXuLy == "Chờ xử lý")
+                                                                {
+                                                                    <button type="submit" class="btn btn-danger" name="action" value="TuChoi">Bỏ qua</button>
+                                                                    <button type="submit" class="btn btn-success" name="action" value="XetDuyet">Phân công xử lý</button>
+                                                                }
+                                                            }
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                            </div><!-- End Vertically centered Modal-->
+                                        </td>
+                                    </tr>
+                                }
+
+                            </tbody>
+                        </table>
+                        <!-- End Table with stripped rows -->
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+</main><!-- End #main -->

@@ -1,0 +1,135 @@
+﻿@model TDMUCLASS.Models.SUCOBAOTRI
+
+
+@{
+    ViewBag.Title = "Nội dung báo cáo";
+
+    if (Session["loaitaikhoan"] != null)
+    {
+        if (Session["loaitaikhoan"].ToString() == "SV")
+        {
+            Layout = "~/Views/Shared/_LayoutStudent.cshtml";
+        }
+        else if (Session["loaitaikhoan"].ToString() == "GV")
+        {
+            Layout = "~/Views/Shared/_LayoutTeacher.cshtml";
+        }
+        else
+        {
+            Layout = "~/Views/Shared/_LayoutShared.cshtml";
+        }
+    }
+    else
+    {
+        Layout = "~/Views/Shared/_LayoutShared.cshtml";
+    }
+}
+
+<style>
+    .formdp {
+        border: 1px dotted rgb(50, 244, 104);
+        border-radius: 5%;
+        background-color: rgb(239, 253, 245);
+    }
+
+    .khoitt {
+        padding: 30px;
+    }
+
+        .khoitt label {
+            padding-top: 20px;
+        }
+
+    #imagePreview {
+        position: relative;
+        padding-top: 20px;
+        max-width: 500px; /* Đặt chiều rộng tối đa của div */
+        overflow: hidden; /* Ẩn phần vượt quá kích thước của div */
+    }
+
+    #previewImage {
+        max-width: 100%; /* Đảm bảo ảnh không vượt quá chiều rộng của div */
+        height: auto; /* Để duy trì tỉ lệ khung hình */
+        display: block; /* Không để ảnh bị đẩy xuống dòng mới */
+        margin: 0 auto; /* Căn giữa ảnh trong div */
+    }
+</style>
+
+<!-- Form for room booking -->
+@using (Html.BeginForm("EditRB", "Account", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <div class="container formdp" id="bookingForm" style="width: 90%; margin-top: 50px;">
+            <h2 style=" margin-top: 30px; text-align: center; text-transform: uppercase;"> Nội dung Báo cáo sự cố</h2>
+
+            <div class="row">
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                @Html.HiddenFor(model => model.MaSuCoBaoTri)
+                <div class="col-md-6">
+                    <!-- Phần 1 - Thông tin người đặt phòng -->
+                    <div class="mb-3 khoitt">
+                        @if (Session["loaitaikhoan"] != null)
+                        {
+                            if (Session["loaitaikhoan"].ToString() == "SV")
+                            {
+                                <label for="maSinhVien">Mã Sinh Viên:</label>
+                                <input type="text" class="form-control" id="maSinhVien" name="maSinhVien" value="@Session["maSinhVienOrGiangVien"].ToString()"  style="background-color: white;" readonly>
+
+                                <label for="tenHocVien">Tên Sinh Viên:</label>
+                                <laber type="text" class="form-control" id="tenHocVien" name="tenHocVien"  style="background-color: white;" readonly>@Session["tenHocVienOrGiangVien"].ToString()</laber>
+                            }
+                            else if (Session["loaitaikhoan"].ToString() == "GV")
+                            {
+                                <label for="maGiangVien">Mã Giảng Viên:</label>
+                                <input type="text" class="form-control" id="maGiangVien" name="maGiangVien" value="@Session["maSinhVienOrGiangVien"].ToString()"  style="background-color: white;" readonly>
+
+
+                                <label for="tenHocVien">Tên Giảng Viên:</label>
+                                <laber type="text" class="form-control" id="tenGiangVien" name="tenGiangVien"  style="background-color: white;" readonly>@Session["tenHocVienOrGiangVien"].ToString()</laber>
+                            }
+                        }
+
+                        <label for="hinhAnh">Ảnh sự cố:</label>
+                        <div id="imagePreview">
+                            <img src="~/img/@Model.AnhSuCo" id="previewImage" alt="Ảnh xem trước">
+                        </div>
+
+                        <label for="moTa">Mô Tả Sự Cố:</label>
+                        <input class="form-control" id="moTa" value="@Model.MoTaSuCo" name="moTaSuCo" style="background-color: white;" readonly>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <!-- Phần 2 - Các thông tin khác -->
+                    <div class="mb-3 khoitt">
+                        <label for="maPhongHoc">Mã phòng học:</label>
+                        <input type="text" class="form-control" name="maPhongHoc" value="@Model.MaPhongHoc" id="selectedMaPhongHoc" style="background-color: white;" readonly>
+
+                        <label for="ngaybc">Ngày báo cáo:</label>
+                        <input type="text" class="form-control" id="ngaybc" value="@Model.ThoiGianBaoCao" name="tgBC" style="background-color: white;" readonly>
+
+                        <label for="maTTB">Mã trang thiết bị:</label>
+                        <input type="text" class="form-control" name="maTTB" value="@Model.MaTrangThietBi" id="selectedTTB"  style="background-color: white;" readonly>
+
+                        <label for="tenTTB">Tên thiết bị:</label>
+                        <input type="text" class="form-control" name="tenTTB" value="@Model.TenTrangThietBi" id="tenTTB"  style="background-color: white;" readonly>
+
+                        <input type="text" class="form-control" name="trangThai" value="@Model.TinhTrangXuLy" id="trangThai" style="display: none;">
+
+                        <input type="text" class="form-control" name="maQuanLy" value="@Model.MaQuanLy" id="maQuanLy" style="display: none;">
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12 text-end" style="padding: 0px 20px 40px 0px;">
+                <!-- Thay đổi thành text-end để căn chỉnh nút ở góc phải -->
+                <button type="button" class="btn btn-secondary" id="cancelButton">Trở lại</button>
+            </div>
+        </div>
+    </div>
+}
+<script>
+    document.getElementById("cancelButton").addEventListener("click", function () {
+        window.location.href = "@Url.Action("ReportHistory", "Account")";
+    });
+</script>

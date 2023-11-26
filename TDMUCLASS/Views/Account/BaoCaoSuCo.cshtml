@@ -1,0 +1,478 @@
+﻿
+
+@{
+    ViewBag.Title = "Báo cáo sự cố";
+
+    if (Session["loaitaikhoan"] != null)
+    {
+        if (Session["loaitaikhoan"].ToString() == "SV")
+        {
+            Layout = "~/Views/Shared/_LayoutStudent.cshtml";
+        }
+        else if (Session["loaitaikhoan"].ToString() == "GV")
+        {
+            Layout = "~/Views/Shared/_LayoutTeacher.cshtml";
+        }
+        else
+        {
+            Layout = "~/Views/Shared/_LayoutShared.cshtml";
+        }
+    }
+    else
+    {
+        Layout = "~/Views/Shared/_LayoutShared.cshtml";
+    }
+}
+
+<!-- Nội dung trang BAOCAOSUCO -->
+
+<style>
+    .formdp {
+        border: 1px dotted rgb(50, 244, 104);
+        border-radius: 5%;
+        background-color: rgb(239, 253, 245);
+    }
+
+    .khoitt {
+        padding: 30px;
+    }
+
+        .khoitt label {
+            padding-top: 20px;
+        }
+</style>
+
+<!-- Search Start -->
+<div class="container-fluid bg-primary mb-5 wow fadeIn" data-wow-delay="0.1s" style="margin-top: 40px; padding: 35px;" id="datphong">
+    <div class="container">
+        <ul style="list-style: none; display: flex; justify-content: space-between; align-items: center; ">
+            <li style="margin: 0 10px;"><h2>BÁO CÁO SỰ CỐ</h2></li>
+            <li style="margin: 0 10px; border: none;" class="btn btn-outline-dark"><a style="color: white;" href="~/Account/ReportHistory">Lịch sử báo cáo</a></li>
+        </ul>
+
+        <form action="/BaoCaoSuCo" method="post">
+            <!-- Thay đổi action thành "/BaoCaoSuCo" -->
+            <div class="row g-2">
+                <div class="col-md-10">
+                    <div class="container">
+                        <div class="row g-2">
+                            <!-- madayhoc -->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label style="margin: 10px 0px; color: rgb(14, 46, 80);" for="maDayHocSelect">Chọn dãy học:</label>
+                                    <select style="height: 50px; background-color: white;" class="form-control" id="maDayHocSelect">
+                                        <option selected>Chọn dãy học...</option>
+                                        @foreach (var dayhoc in Model.DayHocData)
+                                        {
+                                            <option value="@dayhoc.MaDayHoc">@dayhoc.MaDayHoc</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label style="margin: 10px 0px; color: rgb(14, 46, 80);" for="maPhongHocSelect">Chọn phòng học:</label>
+                                    <select style="height: 50px; background-color: white;" class="form-control" id="maPhongHocSelect" disabled>
+                                        <option selected value="">Chọn phòng học...</option>
+                                        @foreach (var phonghoc in Model.PhongHocData)
+                                        {
+                                            <option value="@phonghoc.MaPhongHoc" data-madayhoc="@phonghoc.MaDayHoc" data-trangthai="@phonghoc.TrangThai">@phonghoc.MaPhongHoc</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label style="margin: 10px 0px; color: rgb(14, 46, 80);" for="maTTBSelect">Chọn trang thiết bị:</label>
+                                    <select style="height: 50px; background-color: white;" class="form-control" id="maTTBSelect" disabled>
+                                        <option selected>Chọn tên thiết bị...</option>
+                                        @foreach (var ttb in Model.QLTTBData)
+                                        {
+                                            <option value="@ttb.MaTrangThietBi" data-maphonghoc="@ttb.MaPhongHoc">@ttb.TenTTB</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <button class="btn btn-dark border-0 w-100 py-3" id="searchButton">Tạo Báo cáo</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<div id="message" style="display: none;"></div>
+<!-- Search End -->
+<!-- Form for room booking -->
+@using (Html.BeginForm("BaoCaoSuCo", "Account", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <div class="container formdp" id="bookingForm" style="display:none; width: 90%;">
+            <h2 style="padding:40px 0px 0px 20px; text-transform: uppercase;">Thông tin báo cáo sự cố</h2>
+            <div class="row">
+                <div class="col-md-6">
+                    <!-- Phần 1 - Thông tin người đặt phòng -->
+                    <div class="mb-3 khoitt">
+                        @if (Session["loaitaikhoan"] != null)
+                        {
+                            if (Session["loaitaikhoan"].ToString() == "SV")
+                            {
+                                <label for="maSinhVien">Mã Sinh Viên:</label>
+                                <input type="text" class="form-control" id="maSinhVien" name="maSinhVien" value="@Session["maSinhVienOrGiangVien"].ToString()" readonly>
+
+                                <label for="tenHocVien">Tên Sinh Viên:</label>
+                                <laber type="text" class="form-control" id="tenHocVien" name="tenHocVien" readonly>@Session["tenHocVienOrGiangVien"].ToString()</laber>
+                            }
+                            else if (Session["loaitaikhoan"].ToString() == "GV")
+                            {
+                                <label for="maGiangVien">Mã Giảng Viên:</label>
+                                <input type="text" class="form-control" id="maGiangVien" name="maGiangVien" value="@Session["maSinhVienOrGiangVien"].ToString()" readonly>
+
+                                <label for="tenGiangVien">Tên Giảng Viên:</label>
+                                <label type="text" class="form-control" id="tenGiangVien" name="tenGiangVien" readonly>@Session["tenHocVienOrGiangVien"].ToString()</label>
+                            }
+                        }
+
+                        <label for="hinhAnh">Tải ảnh lên:</label>
+                        <input style="background-color: white;" type="file" class="form-control" id="hinhAnh" name="fFileUpload" required>
+                        <div id="imagePreview" style="display: none; position: relative; padding-top: 20px;">
+                            <img style="width: 500px;" src="" id="previewImage" alt="Ảnh xem trước">
+                            <button type="button" id="removeImage" class="btn btn-danger" style="position: absolute; top: 25px; left: 5px;">X</button>
+                            <!-- Thêm input ẩn để lưu đường dẫn ảnh -->
+                            <input type="hidden" id="anhSuCo" name="anhSuCo" />
+                        </div>
+
+
+                        <label for="moTa">Mô Tả Sự Cố:</label>
+                        <textarea style="height: 115px;" class="form-control" id="moTa" name="moTaSuCo" required></textarea>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <!-- Phần 2 - Các thông tin khác -->
+                    <div class="mb-3 khoitt">
+                        <label for="maPhongHoc">Mã phòng học:</label>
+                        <input type="text" class="form-control" name="maPhongHoc" id="selectedMaPhongHoc" readonly>
+
+                        <label for="ngaybc">Ngày báo cáo:</label>
+                        <input type="datetime-local" class="form-control" id="ngaybc" name="tgBC">
+
+                        <label for="maTTB">Mã trang thiết bị:</label>
+                        <input type="text" class="form-control" name="maTTB" id="selectedTTB">
+
+                        <label for="tenTTB">Tên thiết bị:</label>
+                        <input type="text" class="form-control" name="tenTTB" id="tenTTB">
+
+                        <input type="text" class="form-control" name="trangThai" value="Chờ xử lý" id="trangThai" style="display: none;">
+
+                        <input type="text" class="form-control" name="maQuanLy" value="YourQuanLyIDHere" id="maQuanLy" style="display: none;">
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12 text-end" style="padding: 0px 20px 40px 0px;">
+                <!-- Thay đổi thành text-end để căn chỉnh nút ở góc phải -->
+                <button type="submit" class="btn btn-primary" style="margin-right:20px;" id="submitButton">Xác nhận</button>
+                <button type="button" class="btn btn-secondary" id="cancelButton">Hủy</button>
+            </div>
+        </div>
+    </div>
+}
+
+
+
+<script>
+    //Lấy ngày giờ hiện tại
+    function updateDateTime() {
+        var currentDate = new Date();
+
+        var year = currentDate.getFullYear();
+        var month = (currentDate.getMonth() + 1).toString().padStart(2, '0');
+        var day = currentDate.getDate().toString().padStart(2, '0');
+        var hours = currentDate.getHours().toString().padStart(2, '0');
+        var minutes = currentDate.getMinutes().toString().padStart(2, '0');
+        var formattedDate = year + '-' + month + '-' + day + 'T' + hours + ':' + minutes;
+
+        document.getElementById("ngaybc").value = formattedDate;
+    }
+
+    // Cập nhật giá trị ban đầu
+    updateDateTime();
+
+    // Cập nhật giá trị mỗi giây
+    setInterval(updateDateTime, 1000); // 1000ms = 1 giây
+
+</script>
+
+<script>
+    // Lắng nghe sự kiện thay đổi trên input file
+    document.getElementById("hinhAnh").addEventListener("change", function () {
+        var fileInput = this;
+        var imagePreview = document.getElementById("imagePreview");
+        var previewImage = document.getElementById("previewImage");
+
+        if (fileInput.files && fileInput.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                previewImage.src = e.target.result;
+
+                // Hiển thị thẻ div và ảnh
+                imagePreview.style.display = "block";
+
+                // Cập nhật kích thước
+                if (previewImage.width > imagePreview.clientWidth || previewImage.height > imagePreview.clientHeight) {
+                    if (previewImage.width / imagePreview.clientWidth > previewImage.height / imagePreview.clientHeight) {
+                        previewImage.style.width = "100%";
+                        previewImage.style.height = "auto";
+                    } else {
+                        previewImage.style.height = "100%";
+                        previewImage.style.width = "auto";
+                    }
+                }
+            };
+            reader.readAsDataURL(fileInput.files[0]);
+        } else {
+            // Ẩn thẻ div khi không có tệp hình ảnh
+            imagePreview.style.display = "none";
+        }
+    });
+
+    // Lắng nghe sự kiện click trên nút "X" để xóa ảnh
+    document.getElementById("removeImage").addEventListener("click", function () {
+        var imagePreview = document.getElementById("imagePreview");
+        var previewImage = document.getElementById("previewImage");
+
+        // Đặt ảnh thành trạng thái ban đầu (ảnh không tồn tại)
+        previewImage.src = "";
+        imagePreview.style.display = "none";
+
+        // Đặt giá trị tệp hình ảnh trong input file thành rỗng để xóa tệp đã chọn
+        document.getElementById("hinhAnh").value = "";
+    });
+
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+
+    $(document).ready(function () {
+        var bookingFormVisible = false; // Track if the booking form is visible
+
+        // Lắng nghe sự kiện thay đổi trên select "Dãy học"
+        $('#maDayHocSelect').change(function () {
+            var selectedMaDayHoc = $(this).val();
+            if (selectedMaDayHoc !== '') {
+                // Nếu đã chọn "MaDayHoc," thì mở chọn "Phòng học" và cập nhật danh sách "Phòng học" tương ứng
+                $('#maPhongHocSelect').prop('disabled', false);
+                $('#maPhongHocSelect option').hide();
+                $('#maPhongHocSelect option[data-madayhoc="' + selectedMaDayHoc + '"]').show();
+                // Chọn lựa chọn mặc định cho "Phòng học"
+                $('#maPhongHocSelect').val('');
+            } else {
+                // Nếu chưa chọn "MaDayHoc," thì vô hiệu hóa chọn "Phòng học" và đặt giá trị mặc định
+                $('#maPhongHocSelect').prop('disabled', true);
+                $('#maPhongHocSelect').val('');
+            }
+        });
+
+        // Lắng nghe sự kiện thay đổi mã dãy học
+        $('#maDayHocSelect').change(function () {
+            // Cập nhật thông tin mã dãy học trong form điền thông tin
+            var selectedMaDayHoc = $(this).val();
+            $('#maDayHoc').val(selectedMaDayHoc);
+        });
+
+        // Lắng nghe sự kiện thay đổi mã phòng học
+        $('#maPhongHocSelect').change(function () {
+            // Cập nhật thông tin mã phòng học trong form điền thông tin
+            var selectedMaPhongHoc = $(this).val();
+            $('#selectedMaPhongHoc').val(selectedMaPhongHoc);
+            var selectedTrangThai = $(this).find(':selected').data('trangthai');
+
+            // Cập nhật trạng thái xử lý (trong trường hợp phòng đang sử dụng)
+            if (selectedTrangThai === "Đang Sử Dụng") {
+                $('#trangThai').val('Đang Sử Dụng');
+            } else {
+                $('#trangThai').val('Chờ xử lý');
+            }
+        });
+
+        // Lắng nghe sự kiện click trên nút "Hủy"
+        $('#cancelButton').click(function () {
+            // Ẩn form khi nhấn nút "Hủy"
+            $('#bookingForm').hide();
+            bookingFormVisible = false;
+        });
+        // Xử lý hiển thị thông báo
+        function showSuccessMessage() {
+            $("#thongbao").show();
+            setTimeout(function () {
+                $("#thongbao").hide();
+            }, 3000); // 3 giây
+        }
+
+        @if (TempData["SuccessMessage"] != null)
+        {
+            @:showSuccessMessage();
+        }
+
+    });
+</script>
+
+
+
+
+
+<script>
+
+    $(document).ready(function () {
+        var bookingFormVisible = false; // Track if the booking form is visible
+
+        // Lắng nghe sự kiện thay đổi trên select "Dãy học"
+        $('#maPhongHocSelect').change(function () {
+            var selectedMaPhongHoc = $(this).val();
+            if (selectedMaPhongHoc !== '') {
+                // Nếu đã chọn "MaDayHoc," thì mở chọn "Phòng học" và cập nhật danh sách "Phòng học" tương ứng
+                $('#maTTBSelect').prop('disabled', false);
+                $('#maTTBSelect option').hide();
+                $('#maTTBSelect option[data-maphonghoc="' + selectedMaPhongHoc + '"]').show();
+                // Chọn lựa chọn mặc định cho "Phòng học"
+                $('#maTTBSelect').val('');
+            } else {
+                // Nếu chưa chọn "MaDayHoc," thì vô hiệu hóa chọn "Phòng học" và đặt giá trị mặc định
+                $('#maTTBSelect').prop('disabled', true);
+                $('#maTTBSelect').val('');
+            }
+        });
+
+        // Lắng nghe sự kiện thay đổi mã dãy học
+        $('#maPhongHocSelect').change(function () {
+            // Cập nhật thông tin mã dãy học trong form điền thông tin
+            var selectedMaPhongHoc = $(this).val();
+            $('#maPhongHoc').val(selectedMaPhongHoc);
+        });
+
+        // Lắng nghe sự kiện thay đổi mã phòng học
+        $('#maTTBSelect').change(function () {
+            // Cập nhật thông tin mã phòng học trong form điền thông tin
+            var selectedMaTTB = $(this).val();
+            $('#selectedMaTTB').val(selectedMaTTB);
+            var selectedTrangThai = $(this).find(':selected').data('trangthai');
+
+            // Cập nhật trạng thái xử lý (trong trường hợp phòng đang sử dụng)
+            if (selectedTrangThai === "Đang Sử Dụng") {
+                $('#trangThai').val('Đang Sử Dụng');
+            } else {
+                $('#trangThai').val('Chờ xử lý');
+            }
+        });
+
+    });
+</script>
+
+
+<script>
+    //MAQUANLY
+    var maQuanLyInput = document.getElementById("maQuanLy");
+    var maDayHocSelect = document.getElementById("maDayHocSelect");
+
+    maDayHocSelect.addEventListener("change", function () {
+        var selectedMaDayHoc = maDayHocSelect.value;
+
+        // Tạo một mảng JavaScript chứa các cặp mã dãy học và mã quản lý từ dữ liệu Model.DayHocData
+        var dayHocData = [
+            @foreach (var dayhoc in Model.DayHocData)
+            {
+                <text>['@dayhoc.MaDayHoc', '@dayhoc.MaQuanLy'],</text>
+            }
+        ];
+
+        // Tìm mã quản lý dựa trên mã dãy học được chọn
+        for (var i = 0; i < dayHocData.length; i++) {
+            if (dayHocData[i][0] === selectedMaDayHoc) {
+                var maQuanLy = dayHocData[i][1];
+                maQuanLyInput.value = maQuanLy;
+                break;
+            }
+        }
+    });
+</script>
+
+<script>
+    $(document).ready(function () {
+        $('#searchButton').click(function (e) {
+            e.preventDefault();
+
+            var selectedMaPhongHoc = $('#maPhongHocSelect').val();
+            var selectedTrangThietBi = $('#maTTBSelect').val();
+
+            // Kiểm tra xem đã chọn đủ thông tin hay chưa
+            if (!selectedMaPhongHoc || !selectedTrangThietBi) {
+                alert('Vui lòng chọn đủ thông tin.');
+                return;
+            }
+
+            // Hiển thị biểu mẫu để nhập thông tin khác
+            showBookingForm();
+        });
+
+        // Hàm để hiển thị biểu mẫu đặt phòng
+        function showBookingForm() {
+            $('#bookingForm').show();
+        }
+    });
+</script>
+<script>
+    // Lắng nghe sự kiện thay đổi trên dropdown "Chọn trang thiết bị"
+    $('#maTTBSelect').change(function () {
+        // Lấy giá trị đã chọn trong dropdown
+        var selectedMaTTB = $(this).val();
+
+        // Lấy dữ liệu từ Model.QLTTBData tương ứng với mã trang thiết bị đã chọn
+        var selectedTTBData = @Html.Raw(Json.Encode(Model.QLTTBData));
+
+        // Tìm trang thiết bị trong danh sách
+        var foundTTB = selectedTTBData.find(ttb => ttb.MaTrangThietBi == selectedMaTTB);
+
+        // Kiểm tra xem có trang thiết bị nào được chọn hay không
+        if (foundTTB) {
+            // Cập nhật các trường thông tin trong form nhập thông tin
+            $('#selectedTTB').val(foundTTB.MaTrangThietBi);
+            $('#tenTTB').val(foundTTB.TenTTB);
+            // Các trường thông tin khác tùy thuộc vào cấu trúc dữ liệu của selectedTTBData
+        }
+    });
+</script>
+
+
+
+
+
