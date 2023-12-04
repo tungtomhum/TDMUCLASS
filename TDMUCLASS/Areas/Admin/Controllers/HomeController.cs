@@ -1,10 +1,12 @@
-﻿using System;
+﻿using Antlr.Runtime.Misc;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Web;
 using System.Web.Mvc;
 using TDMUCLASS.Controllers;
 using TDMUCLASS.Models;
-
 
 namespace TDMUCLASS.Areas.Admin.Controllers
 {
@@ -55,8 +57,6 @@ namespace TDMUCLASS.Areas.Admin.Controllers
             // If the user is not logged in, you might want to redirect them to the login page or handle it accordingly.
             return RedirectToAction("Login");
         }
-
-
 
         public ActionResult NavPartial()
         {
@@ -122,6 +122,7 @@ namespace TDMUCLASS.Areas.Admin.Controllers
             }
         }
 
+
         //DATPHONG
         public ActionResult DSDatPhong()
         {
@@ -132,20 +133,56 @@ namespace TDMUCLASS.Areas.Admin.Controllers
             // Retrieve and store HoTen information in ViewBag
             ViewBag.HoTenDictionary = GetHoTenDictionary(bookings);
 
-            return View(bookings.OrderBy(n => n.MaSinhVien));
+            return View(bookings.OrderBy(n => n.TrangThai));
         }
         //SUCOBAOTRI
+        [HttpGet]
         public ActionResult DSSuCo()
         {
             QUANLY admin = Session["Admin"] as QUANLY;
 
-            var bookings = data.SUCOBAOTRIs.Where(dp => dp.MaQuanLy == admin.MaQuanLy);
+            var viewModel = new SuLyModel
+            {
+                SuCoBaoTriData = data.SUCOBAOTRIs.Where(dp => dp.MaQuanLy == admin.MaQuanLy).ToList(),
+                BoPhanSuLyData = data.BOPHANXULYSUCOs.ToList(),
+                PhanCongData = data.PHANCONGXULY_SUCOs.ToList()
+            };
 
-            // Retrieve and store HoTen information in ViewBag
-            ViewBag.HoTenDictionary = GetHoTenDictionary1(bookings);
+            ViewBag.HoTenDictionary1 = GetHoTenDictionary1(viewModel.SuCoBaoTriData);
 
-            return View(bookings.OrderBy(n => n.MaSinhVien));
+            return View(viewModel);
         }
+        [HttpPost]
+        [ValidateInput(false)]
+        public ActionResult DSSuCo(PHANCONGXULY_SUCO phancong, FormCollection f)
+        {
+            SUCOBAOTRI suco = data.SUCOBAOTRIs.SingleOrDefault(dp => dp.MaSuCoBaoTri == Convert.ToInt32(f["fMaSCBT"]) && dp.MaQuanLy == f["fMaQuanLy"]);
+
+            if (ModelState.IsValid)
+            {
+                suco.TinhTrangXuLy = "Đã tiếp nhận";
+                phancong.MaPhongHoc = f["fMaPhongHoc"];
+                phancong.MaQuanLy = f["fMaQuanLy"];
+                phancong.MaNhanVien = f["fMaNV"];
+                phancong.HoTen = f["fHoTenNV"];
+                phancong.MaSuCoBaoTri = Convert.ToInt32(f["fMaSCBT"]);
+                phancong.MaTrangThietBi = f["fMaTTB"];
+                phancong.MoTa = f["fMoTa"];
+                phancong.TrangThaiXuLy = f["fTinhTrang"];
+                phancong.NgayGioPhanCong = Convert.ToDateTime(f["fNgayPhanCong"]);
+                phancong.AnhSuCo = f["fAnhSuCo"];
+                data.PHANCONGXULY_SUCOs.InsertOnSubmit(phancong);
+                data.SubmitChanges();
+
+                TempData["SuccessMessage"] = "Đã đặt phòng thành công";
+
+                // Chuyển đến trang phancong sau khi thêm đặt phòng thành công
+                return RedirectToAction("DSSuCo");
+            }
+            return View();
+        }
+
+
 
         private Dictionary<string, string> GetHoTenDictionary(IEnumerable<DATPHONG> bookings)
         {
@@ -175,7 +212,7 @@ namespace TDMUCLASS.Areas.Admin.Controllers
         }
         private Dictionary<string, string> GetHoTenDictionary1 (IEnumerable<SUCOBAOTRI> bookings)
         {
-            Dictionary<string, string> hoTenDictionary = new Dictionary<string, string>();
+            Dictionary<string, string> hoTenDictionary1 = new Dictionary<string, string>();
 
             foreach (var datphong in bookings)
             {
@@ -184,7 +221,7 @@ namespace TDMUCLASS.Areas.Admin.Controllers
                     var giangVien = data.GIANGVIENs.SingleOrDefault(gv => gv.MaGiangVien == datphong.MaGiangVien);
                     if (giangVien != null)
                     {
-                        hoTenDictionary[datphong.MaGiangVien] = giangVien.HoTen;
+                        hoTenDictionary1[datphong.MaGiangVien] = giangVien.HoTen;
                     }
                 }
                 else if (!string.IsNullOrEmpty(datphong.MaSinhVien))
@@ -192,12 +229,12 @@ namespace TDMUCLASS.Areas.Admin.Controllers
                     var sinhVien = data.SINHVIENs.SingleOrDefault(sv => sv.MaSinhVien == datphong.MaSinhVien);
                     if (sinhVien != null)
                     {
-                        hoTenDictionary[datphong.MaSinhVien] = sinhVien.HoTen;
+                        hoTenDictionary1[datphong.MaSinhVien] = sinhVien.HoTen;
                     }
                 }
             }
 
-            return hoTenDictionary;
+            return hoTenDictionary1;
         }
 
         [HttpPost]
@@ -249,10 +286,6 @@ namespace TDMUCLASS.Areas.Admin.Controllers
                     {
                         suco.TinhTrangXuLy = "Từ chối";
                     }
-                    else if (action == "XetDuyet")
-                    {
-                        suco.TinhTrangXuLy = "Đã duyệt";
-                    }
 
                     // Save changes to the database
                     data.SubmitChanges();
@@ -266,11 +299,208 @@ namespace TDMUCLASS.Areas.Admin.Controllers
             return RedirectToAction("Login");
         }
 
+        [HttpGet]
+        public ActionResult QLSinhVien()
+        {
+            return View(data.SINHVIENs.ToList().OrderBy(n => n.MaSinhVien));
+        }
+        public ActionResult QLGiangVien()
+        {
+            return View(data.GIANGVIENs.ToList().OrderBy(n => n.MaGiangVien));
+        }
+        [HttpGet]
+        public ActionResult QLNhanVien()
+        {
+            return View(data.BOPHANXULYSUCOs.ToList().OrderBy(n => n.MaNhanVien));
+        }
+        public ActionResult QuanLyTTB()
+        {
+            // Check if the user is logged in
+            if (Session["Admin"] is QUANLY admin)
+            {
+
+                // Thực hiện truy vấn với điều kiện
+                var filteredData = (from qlttb in data.QUANLY_TRANGTHIETBIs
+                                    join phong in data.PHONGHOCs on qlttb.MaPhongHoc equals phong.MaPhongHoc
+                                    join day in data.DAYHOCs on phong.MaDayHoc equals day.MaDayHoc
+                                    join ttb in data.TRANGTHIETBIs on qlttb.MaTrangThietBi equals ttb.MaTrangThietBi
+                                    where day.MaQuanLy == admin.MaQuanLy
+                                    
+                                    select new QuanLyTTBViewModel
+                                    {
+                                        id = qlttb.id,
+                                        MaPhongHoc = qlttb.MaPhongHoc,
+                                        MaTrangThietBi = qlttb.MaTrangThietBi,
+                                        TenTTB = qlttb.TenTTB,
+                                        TinhTrang = qlttb.TinhTrang,
+                                        SoLuong = Convert.ToInt32(qlttb.SoLuong),
+                                        DonViTinh = ttb.DonViTinh,
+                                        AnhTB = ttb.AnhTB,
+                                        // Các thông tin khác từ THOKHOABIEU nếu cần
+                                    }).ToList();
+
+                return View(filteredData);
+            }
+            return RedirectToAction("Login", "Home");
+        }
+
+
+        [HttpGet]
+        public ActionResult AddSV()
+        {
+           return View();
+        }
+        [HttpPost]
+        [ValidateInput(false)]
+        public ActionResult AddSV(SINHVIEN sv, FormCollection f)
+        {
+            QUANLY admin = Session["Admin"] as QUANLY;
+
+            // Kiểm tra xem TAIKHOAN có sẵn trong data.TAIKHOANs không
+            TAIKHOAN tk = data.TAIKHOANs.SingleOrDefault(t => t.MaSinhVien == f["fMaSV"]);
+
+            if (tk == null)
+            {
+                // Nếu không tồn tại, tạo mới đối tượng TAIKHOAN
+                tk = new TAIKHOAN();
+                data.TAIKHOANs.InsertOnSubmit(tk);
+            }
+
+            // Cập nhật thông tin của đối tượng TAIKHOAN
+            tk.MaQuanLy = admin.MaQuanLy;
+            tk.MaSinhVien = f["fMaSV"];
+            tk.TenDangNhap = f["fMaSV"];
+            tk.MatKhau = f["fMaSV"];
+            tk.LoaiTaiKhoan = "SV";
+            tk.Avartar = "SV.png";
+
+            sv.MaSinhVien = f["fMaSV"];
+            sv.HoTen = f["fHoten"];
+            sv.Lop = f["fLop"];
+            sv.NgaySinh = Convert.ToDateTime(f["fNgaySinh"]);
+            sv.Email = f["fEmail"];
+            sv.DienThoai = f["fSDT"];
+            sv.ChuyenNganh = f["fChuyenNganh"];
+            sv.DiaChi = f["fDiaChi"];
+
+            // Nếu là đối tượng mới, thêm vào data.TAIKHOANs
+            if (tk.TaiKhoanID == 0)
+            {
+                data.SINHVIENs.InsertOnSubmit(sv);
+            }
+
+            // Lưu thay đổi vào database
+            data.SubmitChanges();
+
+            // Chuyển đến trang phancong sau khi thêm đặt phòng thành công
+            return RedirectToAction("QLSinhVien");
+        }
+
+        [HttpGet]
+        public ActionResult EditSV(string id)
+        {
+            var sv = data.SINHVIENs.SingleOrDefault(n => n.MaSinhVien == id);
+            if (sv == null)
+            {
+                return HttpNotFound();
+            }
+
+            return View(sv);
+        }
+
+        [HttpPost]
+        public ActionResult EditSV(SINHVIEN sv)
+        {
+            if (ModelState.IsValid)
+            {
+                var existingSV = data.SINHVIENs.SingleOrDefault(n => n.MaSinhVien == sv.MaSinhVien);
+
+                if (existingSV != null)
+                {
+                    existingSV.HoTen = sv.HoTen;
+                    existingSV.Lop = sv.Lop;
+                    existingSV.Email = sv.Email;
+                    existingSV.DiaChi = sv.DiaChi;
+                    existingSV.DienThoai = sv.DienThoai;
+                    existingSV.ChuyenNganh = sv.ChuyenNganh;
+                    existingSV.NgaySinh = sv.NgaySinh;
+
+                    data.SubmitChanges();
+                    return RedirectToAction("QLSinhVien");
+                }
+            }
+
+            return View(sv);
+        }
 
 
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+        [HttpGet]
+        public ActionResult AddGV()
+        {
+            return View();
+        }
+        [HttpPost]
+        [ValidateInput(false)]
+        public ActionResult AddGV(GIANGVIEN gv, FormCollection f)
+        {
+            if (ModelState.IsValid)
+            {
+                gv.MaGiangVien = f["fMaGV"];
+                gv.HoTen = f["fHoten"];
+                gv.NgaySinh = Convert.ToDateTime(f["fNgaySinh"]);
+                gv.Email = f["fEmail"];
+                gv.DienThoai = f["fSDT"];
+                gv.ChuyenNganh = f["fChuyenNganh"];
+                gv.DiaChi = f["fDiaChi"];
+                data.GIANGVIENs.InsertOnSubmit(gv);
+                data.SubmitChanges();
+
+                // Chuyển đến trang phancong sau khi thêm đặt phòng thành công
+                return RedirectToAction("QLGiangVien");
+            }
+            return View();
+        }
+        [HttpGet]
+        public ActionResult AddNV()
+        {
+            return View();
+        }
+        [HttpPost]
+        [ValidateInput(false)]
+        public ActionResult AddNV(BOPHANXULYSUCO nv, FormCollection f)
+        {
+            if (ModelState.IsValid)
+            {
+                nv.MaNhanVien = f["fMaNV"];
+                nv.HoTen = f["fHoten"];
+                nv.NgaySinh = Convert.ToDateTime(f["fNgaySinh"]);
+                nv.Email = f["fEmail"];
+                nv.DienThoai = f["fSDT"];
+                nv.ChucVu = f["fChucVu"];
+                nv.DiaChi = f["fDiaChi"];
+                data.BOPHANXULYSUCOs.InsertOnSubmit(nv);
+                data.SubmitChanges();
+
+                // Chuyển đến trang phancong sau khi thêm đặt phòng thành công
+                return RedirectToAction("QLNhanVien");
+            }
+            return View();
+        }
 
 
 

@@ -1,0 +1,78 @@
+﻿
+@{
+    ViewBag.Title = "Trang Chủ";
+
+    if (Session["loaitaikhoan"] != null)
+    {
+        if (Session["loaitaikhoan"].ToString() == "SV")
+        {
+            Layout = "~/Views/Shared/_LayoutStudent.cshtml";
+        }
+        else if (Session["loaitaikhoan"].ToString() == "GV")
+        {
+            Layout = "~/Views/Shared/_LayoutTeacher.cshtml";
+        }
+        else
+        {
+            Layout = "~/Views/Shared/_LayoutShared.cshtml";
+        }
+    }
+    else
+    {
+        Layout = "~/Views/Shared/_LayoutShared.cshtml";
+    }
+}
+
+@{
+    string tenHocVienOrGiangVien = Session["tenHocVienOrGiangVien"] as string;
+    string maHocVienOrGiangVien = Session["maSinhVienOrGiangVien"] as string;
+    string avatarPath = Session["AvatarPath"] as string; 
+}
+
+<style type="text/css">
+    .bgSV {
+        background-image: url('../../img/chaomungsv.jpg');
+        background-size: 100%;
+        background-repeat: no-repeat;
+        margin-top: 40px;
+        height: 500px;
+    }
+
+    .bgGV {
+        background-image: url('../../img/chaomungGV.jpg');
+        background-size: 100%;
+        background-repeat: no-repeat;
+        margin-top: 40px;
+        height: 500px;
+    }
+</style>
+
+<div id="chaomung"></div>
+<div>
+    @if (Session["loaitaikhoan"].ToString() == "SV")
+    {
+        <div class="bgSV">
+            <div style="padding: 120px 0px 0px 200px;">
+                <img style="width: 200px; margin: 0px 300px; width: 200px; border-radius: 50%;" src="~/img/@avatarPath" />
+                <h1 class="display-5 animated fadeIn mb-4" style="text-transform: uppercase;">
+                    Xin chào: <span class="text-primary">@tenHocVienOrGiangVien</span> <br />
+                    MSSV: <span class="text-primary">@maHocVienOrGiangVien</span>
+                </h1>
+            </div>
+        </div>
+    }
+    else if (Session["loaitaikhoan"].ToString() == "GV")
+    {
+    <div class="bgGV">
+        <div style="padding: 80px 0px 0px 400px;">
+            <img style="width: 200px; margin: 0px 300px; width: 200px; border-radius: 50%;" src="~/img/@avatarPath" />
+            <h1 class="display-5 animated fadeIn mb-4" style="text-transform: uppercase;">
+                Xin chào: <span class="text-primary">@tenHocVienOrGiangVien</span> <br />
+                Mã giảng viên: <span class="text-primary">@maHocVienOrGiangVien</span>
+            </h1>
+        </div>
+    </div>
+    }
+</div>
+
+

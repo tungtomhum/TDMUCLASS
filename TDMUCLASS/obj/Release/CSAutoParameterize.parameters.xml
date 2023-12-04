@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<parameters>
+  <parameter name="TDMUCLASSConnectionString21-Web.config Connection String" description="TDMUCLASSConnectionString21 Connection String used in web.config by the application to access the database." defaultValue="Data Source=LAPTOP-SD6JFUCG\MSSQLSERVER01;Initial Catalog=TDMUCLASS;Integrated Security=True" tags="SqlConnectionString">
+    <parameterEntry kind="XmlFile" scope="D:\\CODE\\TDMUCLASS\\TDMUCLASS\\obj\\Release\\Package\\PackageTmp\\Web\.config$" match="/configuration/connectionStrings/add[@name='TDMUCLASSConnectionString21']/@connectionString" />
+  </parameter>
+  <parameter name="TDMUCLASSConnectionString-Web.config Connection String" description="TDMUCLASSConnectionString Connection String used in web.config by the application to access the database." defaultValue="Data Source=LAPTOP-SD6JFUCG\MSSQLSERVER01;Initial Catalog=TDMUCLASS;Integrated Security=True" tags="SqlConnectionString">
+    <parameterEntry kind="XmlFile" scope="D:\\CODE\\TDMUCLASS\\TDMUCLASS\\obj\\Release\\Package\\PackageTmp\\Web\.config$" match="/configuration/connectionStrings/add[@name='TDMUCLASSConnectionString']/@connectionString" />
+  </parameter>
+  <parameter name="TDMUCLASSConnectionString1-Web.config Connection String" description="TDMUCLASSConnectionString1 Connection String used in web.config by the application to access the database." defaultValue="Data Source=LAPTOP-SD6JFUCG\MSSQLSERVER01;Initial Catalog=TDMUCLASS;Integrated Security=True" tags="SqlConnectionString">
+    <parameterEntry kind="XmlFile" scope="D:\\CODE\\TDMUCLASS\\TDMUCLASS\\obj\\Release\\Package\\PackageTmp\\Web\.config$" match="/configuration/connectionStrings/add[@name='TDMUCLASSConnectionString1']/@connectionString" />
+  </parameter>
+  <parameter name="TDMUCLASSConnectionString2-Web.config Connection String" description="TDMUCLASSConnectionString2 Connection String used in web.config by the application to access the database." defaultValue="Data Source=LAPTOP-SD6JFUCG\MSSQLSERVER01;Initial Catalog=TDMUCLASS;Integrated Security=True" tags="SqlConnectionString">
+    <parameterEntry kind="XmlFile" scope="D:\\CODE\\TDMUCLASS\\TDMUCLASS\\obj\\Release\\Package\\PackageTmp\\Web\.config$" match="/configuration/connectionStrings/add[@name='TDMUCLASSConnectionString2']/@connectionString" />
+  </parameter>
+  <parameter name="TDMUCLASSConnectionString3-Web.config Connection String" description="TDMUCLASSConnectionString3 Connection String used in web.config by the application to access the database." defaultValue="Data Source=LAPTOP-SD6JFUCG\MSSQLSERVER01;Initial Catalog=TDMUCLASS;Integrated Security=True" tags="SqlConnectionString">
+    <parameterEntry kind="XmlFile" scope="D:\\CODE\\TDMUCLASS\\TDMUCLASS\\obj\\Release\\Package\\PackageTmp\\Web\.config$" match="/configuration/connectionStrings/add[@name='TDMUCLASSConnectionString3']/@connectionString" />
+  </parameter>
+</parameters>

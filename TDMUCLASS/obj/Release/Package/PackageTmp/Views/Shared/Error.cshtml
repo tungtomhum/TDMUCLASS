@@ -1,0 +1,54 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Error</title>
+</head>
+<body>
+    <hgroup>
+        <h1>Error.</h1>
+        <h2>An error occurred while processing your request.</h2>
+    </hgroup>
+</body>
+</html>
+
+<script>
+            // Lắng nghe sự kiện click trên nút "Search"
+        $('#searchButton').click(function (e) {
+            e.preventDefault(); // Ngăn chặn gửi yêu cầu mặc định của nút "Search"
+
+            // Kiểm tra xem mã dãy học và mã phòng học đã được chọn
+            var selectedMaDayHoc = $('#maDayHocSelect').val();
+            var selectedMaPhongHoc = $('#maPhongHocSelect').val();
+            var selectedNgayBD = $('#ngayBD').val();
+            var selectedNgayKT = $('#ngayKT').val();
+            var selectedTrangThai = $('#maPhongHocSelect option:selected').data('trangthai');
+
+            if (selectedMaDayHoc !== '' && selectedMaPhongHoc !== '' && selectedNgayBD !== '' && selectedNgayKT !== '') {
+                if (selectedTrangThai === "Trống") {
+                    if (!bookingFormVisible) {
+                        // Hiện form đặt phòng
+                        $('#bookingForm').show();
+                        bookingFormVisible = true;
+                        $('#selectedMaPhongHoc').val(selectedMaPhongHoc);
+                    }
+                } else {
+                    // Phòng đang sử dụng, hiển thị thông báo
+                    alert('Phòng đang sử dụng. Vui lòng chọn phòng khác.');
+                    if (bookingFormVisible) {
+                        // Ẩn form nếu đã hiển thị trước đó
+                        $('#bookingForm').hide();
+                        bookingFormVisible = false;
+                    }
+                }
+            } else {
+                // Ngược lại, hiển thị thông báo hoặc thực hiện xử lý khác theo yêu cầu của bạn
+                alert('Vui lòng chọn đủ thông tin trước khi đặt phòng.');
+                if (bookingFormVisible) {
+                    // Ẩn form nếu đã hiển thị trước đó
+                    $('#bookingForm').hide();
+                    bookingFormVisible = false;
+                }
+            }
+        }); 
+</script>

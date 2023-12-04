@@ -1,0 +1,41 @@
+﻿
+<style>
+    .navbar-light .navbar-nav .nav-link {
+        padding: 10px;
+    }
+</style>
+
+@{
+    string tenHocVienOrGiangVien = Session["tenHocVienOrGiangVien"] as string;
+    string maHocVienOrGiangVien = Session["maSinhVienOrGiangVien"] as string;
+    string avatarPath = Session["AvatarPath"] as string;
+}
+<!-- Navbar Start -->
+<div class="container-fluid nav-bar bg-transparent">
+    <nav class="navbar navbar-expand-lg bg-white navbar-light py-1.2 px-4">
+        <a href="~/Account/Home" onclick="tailaitrang" class="navbar-brand d-flex align-items-center text-center">
+            <img class="img-fluid" src="~/img/logo-nav .png" alt="Icon" style="width: 350px; height: 80px;">
+        </a>
+        <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarCollapse">
+            <div class="navbar-nav ms-auto">
+                <a href="~/Account/Home" onclick="tailaitrang" class="nav-item nav-link active">Trang chủ</a>
+                <a href="~/Account/DatPhong" class="nav-item nav-link">ĐẶT PHÒNG</a>
+                <a href="~/Account/BaoCaoSuCo" class="nav-item nav-link">BÁO CÁO SỰ CỐ</a>
+                <a href="~/Account/LichGiangDay" class="nav-item nav-link">Lịch giảng dạy</a>
+                <a href="@Url.Action("Logout", "Account")" class="btn btn-primary px-3">
+                    Đăng xuất <i class="fa-solid fa-right-from-bracket" style="margin:5px 0px 0px 10px;"></i>
+                </a>
+            </div>
+            <a href="#" class="d-none d-lg-flex"><img src="~/img/@avatarPath" style="margin-left:5px; width: 50px; border-radius: 50%;"  title="Xin chào: @tenHocVienOrGiangVien"></a>
+        </div>
+    </nav>
+</div>
+<!-- Navbar End -->
+<script>
+    function tailaitrang() {
+        location.reload();
+    }
+</script>

@@ -34,6 +34,10 @@ namespace TDMUCLASS.Controllers
         {
             return PartialView();
         }
+        public ActionResult NavPartialUserNV()
+        {
+            return PartialView();
+        }
         public ActionResult ChaoMungPartial()
         {
             return PartialView();

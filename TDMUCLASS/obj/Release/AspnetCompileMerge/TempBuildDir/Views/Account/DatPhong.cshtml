@@ -1,0 +1,345 @@
+﻿
+@model TDMUCLASS.Models.DayHocPhongHoc
+
+@{
+    ViewBag.Title = "Đặt phòng";
+
+    if (Session["loaitaikhoan"] != null)
+    {
+        if (Session["loaitaikhoan"].ToString() == "SV")
+        {
+            Layout = "~/Views/Shared/_LayoutStudent.cshtml";
+        }
+        else if (Session["loaitaikhoan"].ToString() == "GV")
+        {
+            Layout = "~/Views/Shared/_LayoutTeacher.cshtml";
+        }
+        else
+        {
+            Layout = "~/Views/Shared/_LayoutShared.cshtml";
+        }
+    }
+    else
+    {
+        Layout = "~/Views/Shared/_LayoutShared.cshtml";
+    }
+}
+
+<!-- Nội dung trang DatPhong -->
+
+
+<style>
+    .formdp {
+        border: 1px dotted rgb(50, 244, 104);
+        border-radius: 5%;
+        background-color: rgb(239, 253, 245);
+    }
+
+    .khoitt {
+        padding: 30px;
+    }
+
+        .khoitt label {
+            padding-top: 20px;
+        }
+</style>
+
+<!-- Search Start -->
+<div class="container-fluid bg-primary mb-5 wow fadeIn" data-wow-delay="0.1s" style="margin-top: 40px; padding: 35px;" id="datphong">
+    <div class="container">
+        <ul style="list-style: none; display: flex; justify-content: space-between; align-items: center; ">
+            <li style="margin: 0 10px;"><h2>ĐẶT PHÒNG HỌC</h2></li>
+            <li style="margin: 0 10px; border: none;" class=" btn btn-outline-dark"><a style="color: white;" href="~/Account/BookingHistory">Lịch sử đặt phòng</a></li>
+        </ul>
+
+        <form action="/DatPhong" method="post">
+            <!-- Thay đổi action thành "/DatPhong" -->
+            <div class="row g-2">
+                <div class="col-md-10">
+                    <div class="container">
+                        <div class="row g-2">
+                            <!-- madayhoc -->
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label style="margin: 10px 0px; color: rgb(14, 46, 80);" for="maDayHocSelect">Chọn dãy học:</label>
+                                    <select style="height: 50px; background-color: white;" class="form-control" id="maDayHocSelect">
+                                        <option selected>Chọn dãy học...</option>
+                                        @foreach (var dayhoc in Model.DayHocData)
+                                        {
+                                            <option value="@dayhoc.MaDayHoc">@dayhoc.MaDayHoc</option>
+                                        }
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label style="margin: 10px 0px; color: rgb(14, 46, 80);" for="maPhongHocSelect">Chọn phòng học:</label>
+                                    <select style="height: 50px; background-color: white;" class="form-control" id="maPhongHocSelect" disabled>
+                                        <option selected value="">Chọn phòng học...</option>
+                                        @foreach (var phonghoc in Model.PhongHocData)
+                                        {
+                                            <option value="@phonghoc.MaPhongHoc" data-madayhoc="@phonghoc.MaDayHoc" data-trangthai="@phonghoc.TrangThai">@phonghoc.MaPhongHoc</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- ngaydat-->
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label style="margin: 10px 0px; color: rgb(14, 46, 80);" for="ngayBD">Từ ngày:</label>
+                                    <input style="height: 50px;" type="datetime-local" class="form-control" id="ngayBD" name="ngayBD" required>
+                                    <label style="margin: 10px 0px; color: rgb(14, 46, 80);" for="ngayKT">Đến ngày:</label>
+                                    <input style="height: 50px;" type="datetime-local" class="form-control" id="ngayKT" name="ngayKT" required>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label style="color: rgb(14, 46, 80);" for="ndMoTa">Mô Tả:</label>
+                                    <textarea placeholder="Lý do đặt phòng...." class="form-control" id="ndMoTa" name="moTa"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <button class="btn btn-dark border-0 w-100 py-3" id="searchButton">Đặt phòng</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<div id="message" style="display: none;"></div>
+<!-- Search End -->
+<!-- Form for room booking -->
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <div class="container formdp" id="bookingForm" style="display: none; width: 90%;">
+            <h2 style="padding:40px 0px 0px 20px; text-transform: uppercase; text-align:center;">Thông tin đặt phòng</h2>
+            <div class="row">
+                <div class="col-md-6">
+                    <!-- Phần 1 - Thông tin người đặt phòng -->
+                    <div class="mb-3 khoitt">
+                        @if (Session["loaitaikhoan"] != null)
+                        {
+                            if (Session["loaitaikhoan"].ToString() == "SV")
+                            {
+                                <label for="maSinhVien">Mã Sinh Viên:</label>
+                                <input type="text" class="form-control" id="maSinhVien" name="maSinhVien" value="@Session["maSinhVienOrGiangVien"].ToString()" style="background-color: white;" readonly>
+
+                                <label for="tenHocVien">Tên Sinh Viên:</label>
+                                <laber type="text" class="form-control" id="tenHocVien" name="tenHocVien" style="background-color: white;" readonly>@Session["tenHocVienOrGiangVien"].ToString()</laber>
+                            }
+                            else if (Session["loaitaikhoan"].ToString() == "GV")
+                            {
+                                <label for="maGiangVien">Mã Giảng Viên:</label>
+                                <input type="text" class="form-control" id="maGiangVien" name="maGiangVien" value="@Session["maSinhVienOrGiangVien"].ToString()" style="background-color: white;" readonly>
+
+                                <label for="tenGiangVien">Tên Giảng Viên:</label>
+                                <laber type="text" class="form-control" id="tenHocVien" name="tenHocVien" style="background-color: white;" readonly>@Session["tenHocVienOrGiangVien"].ToString()</laber>
+                            }
+                        }
+                        <label for="moTa">Mô Tả:</label>
+                        <textarea class="form-control" id="moTa" name="moTa" style="background-color: white;" readonly></textarea>
+
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <!-- Phần 2 - Các thông tin khác -->
+                    <div class="mb-3 khoitt">
+                        <label for="maPhongHoc">Mã phòng học:</label>
+                        <input type="datetime" class="form-control" name="maPhongHoc" id="selectedMaPhongHoc" style="background-color: white;" readonly>
+
+                        <label for="ngaybd">Từ ngày:</label>
+                        <input type="datetime-local" class="form-control" id="ngaybd" name="ngaybd" style="background-color: white;" readonly>
+
+                        <label for="ngaykt">Đến ngày:</label>
+                        <input type="datetime-local" class="form-control" id="ngaykt" name="ngaykt" style="background-color: white;" readonly>
+
+
+                        <input type="text" class="form-control" name="trangThai" value="Chờ xử lý" id="trangThai" style="display:none;">
+
+                        <input type="text" class="form-control" name="maQuanLy" value="YourQuanLyIDHere" id="maQuanLy" style="display:none;">
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12 text-end" style="padding: 0px 20px 40px 0px;">
+                <!-- Thay đổi thành text-end để căn chỉnh nút ở góc phải -->
+                <button type="submit" class="btn btn-primary" style="margin-right:20px;" id="submitButton">Xác nhận</button>
+                <button type="button" class="btn btn-secondary" id="cancelButton">Hủy</button>
+            </div>
+        </div>
+    </div>
+}
+
+
+<script>
+    document.getElementById("ndMoTa").addEventListener("input", function () {
+        var moTaValue = document.getElementById("ndMoTa").value;
+        document.getElementById("moTa").value = moTaValue;
+    });
+</script>
+
+<script>
+
+    $(document).ready(function () {
+        var bookingFormVisible = false; // Track if the booking form is visible
+
+        // Lắng nghe sự kiện thay đổi trên select "Dãy học"
+        $('#maDayHocSelect').change(function () {
+            var selectedMaDayHoc = $(this).val();
+            if (selectedMaDayHoc !== '') {
+                // Nếu đã chọn "MaDayHoc," thì mở chọn "Phòng học" và cập nhật danh sách "Phòng học" tương ứng
+                $('#maPhongHocSelect').prop('disabled', false);
+                $('#maPhongHocSelect option').hide();
+                $('#maPhongHocSelect option[data-madayhoc="' + selectedMaDayHoc + '"]').show();
+                // Chọn lựa chọn mặc định cho "Phòng học"
+                $('#maPhongHocSelect').val('');
+            } else {
+                // Nếu chưa chọn "MaDayHoc," thì vô hiệu hóa chọn "Phòng học" và đặt giá trị mặc định
+                $('#maPhongHocSelect').prop('disabled', true);
+                $('#maPhongHocSelect').val('');
+            }
+        });
+
+        // Lắng nghe sự kiện thay đổi mã dãy học
+        $('#maDayHocSelect').change(function () {
+            // Cập nhật thông tin mã dãy học trong form điền thông tin
+            var selectedMaDayHoc = $(this).val();
+            $('#maDayHoc').val(selectedMaDayHoc);
+        });
+
+        // Lắng nghe sự kiện thay đổi mã phòng học
+        $('#maPhongHocSelect').change(function () {
+            // Cập nhật thông tin mã phòng học trong form điền thông tin
+            var selectedMaPhongHoc = $(this).val();
+            $('#selectedMaPhongHoc').val(selectedMaPhongHoc);
+            var selectedTrangThai = $(this).find(':selected').data('trangthai');
+
+            // Cập nhật trạng thái xử lý (trong trường hợp phòng đang sử dụng)
+            if (selectedTrangThai === "Đang Sử Dụng") {
+                $('#trangThai').val('Đang Sử Dụng');
+            } else {
+                $('#trangThai').val('Chờ xử lý');
+            }
+        });
+
+        // Lắng nghe sự kiện click trên nút "Hủy"
+        $('#cancelButton').click(function () {
+            // Ẩn form khi nhấn nút "Hủy"
+            $('#bookingForm').hide();
+            bookingFormVisible = false;
+        });
+        // Xử lý hiển thị thông báo
+        function showSuccessMessage() {
+            $("#thongbao").show();
+            setTimeout(function () {
+                $("#thongbao").hide();
+            }, 3000); // 3 giây
+        }
+
+        @if (TempData["SuccessMessage"] != null)
+        {
+            @:showSuccessMessage();
+        }
+
+    });
+</script>
+
+
+
+
+
+
+
+<script>
+    //Lay du lieu tu ngaybd, ngaykt
+    // Lắng nghe sự kiện thay đổi trên trường "ngayBD"
+    document.getElementById("ngayBD").addEventListener("change", function () {
+        var ngayBDValue = this.value; // Lấy giá trị đã chọn
+
+        // Gán giá trị đã chọn cho trường "ngaybd"
+        document.getElementById("ngaybd").value = ngayBDValue;
+    });
+    document.getElementById("ngayKT").addEventListener("change", function () {
+        var ngayKTValue = this.value; // Lấy giá trị đã chọn
+
+        // Gán giá trị đã chọn cho trường "ngaykt"
+        document.getElementById("ngaykt").value = ngayKTValue;
+    });
+</script>
+
+<script>
+    //MAQUANLY
+    var maQuanLyInput = document.getElementById("maQuanLy");
+    var maDayHocSelect = document.getElementById("maDayHocSelect");
+
+    maDayHocSelect.addEventListener("change", function () {
+        var selectedMaDayHoc = maDayHocSelect.value;
+
+        // Tạo một mảng JavaScript chứa các cặp mã dãy học và mã quản lý từ dữ liệu Model.DayHocData
+        var dayHocData = [
+            @foreach (var dayhoc in Model.DayHocData)
+            {
+                <text>['@dayhoc.MaDayHoc', '@dayhoc.MaQuanLy'],</text>
+            }
+        ];
+
+        // Tìm mã quản lý dựa trên mã dãy học được chọn
+        for (var i = 0; i < dayHocData.length; i++) {
+            if (dayHocData[i][0] === selectedMaDayHoc) {
+                var maQuanLy = dayHocData[i][1];
+                maQuanLyInput.value = maQuanLy;
+                break;
+            }
+        }
+    });
+</script>
+
+<script>
+    $(document).ready(function () {
+        $('#searchButton').click(function (e) {
+            e.preventDefault();
+
+            var selectedMaPhongHoc = $('#maPhongHocSelect').val();
+            var selectedNgayBD = new Date($('#ngayBD').val());
+            var selectedNgayKT = new Date($('#ngayKT').val());
+            var selectedMoTa = $('#ndMoTa').val();
+
+            // Kiểm tra xem đã nhập đủ thông tin hay chưa
+            if (!selectedMaPhongHoc || isNaN(selectedNgayBD.getTime()) || isNaN(selectedNgayKT.getTime()) || !selectedMoTa) {
+                alert('Vui lòng nhập đủ thông tin và chắc chắn chọn ngày bắt đầu và kết thúc hợp lệ.');
+                // Ẩn form khi nhấn nút "Hủy"
+                $('#bookingForm').hide();
+                bookingFormVisible = false;
+                return;
+            }
+
+            // Kiểm tra ngày bắt đầu phải nhỏ hơn ngày kết thúc
+            if (selectedNgayBD >= selectedNgayKT) {
+                alert('Ngày bắt đầu phải nhỏ hơn ngày kết thúc.');
+                // Ẩn form khi nhấn nút "Hủy"
+                $('#bookingForm').hide();
+                bookingFormVisible = false;
+                return;
+            }
+
+            // Hiển thị biểu mẫu để nhập thông tin khác
+            showBookingForm();
+        });
+
+        // Hàm để hiển thị biểu mẫu đặt phòng
+        function showBookingForm() {
+            // Ở đây, bạn có thể thêm mã HTML để hiển thị biểu mẫu đặt phòng
+            // Ví dụ:
+            $('#bookingForm').show();
+        }
+    });
+</script>
+
+
+
+
+

@@ -1,0 +1,131 @@
+﻿@model IEnumerable<TDMUCLASS.Models.BOPHANXULYSUCO>
+
+@{
+    ViewBag.Title = "Danh sách nhân viên";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutHome.cshtml";
+    // Sort the data by NgayBD (start date)
+    var sortedModel = Model.OrderBy(item => item.ChucVu);
+}
+@*Xây dựn một helper tùy chỉnh để cắt độ dài chuỗi*@
+@helper Truncate(string s, int length)
+{
+    if (s.Length < length)
+    {
+        @s
+    }
+    else
+    {
+        @s.Substring(0, length)<text>...</text>
+    }
+
+}
+
+
+
+<main id="main" class="main">
+
+    <div class="pagetitle">
+        <h1>DANH SÁCH NHÂN VIÊN BẢO TRÌ</h1>
+        <nav>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="~/Admin/Home/Home">Admin</a></li>
+                <li class="breadcrumb-item">Home</li>
+                <li class="breadcrumb-item active">Danh sách Nhân viên</li>
+            </ol>
+        </nav>
+    </div><!-- End Page Title -->
+
+    <section class="section">
+        <div class="row">
+            <div class="col-lg-12">
+
+                <div class="card">
+                    <div class="card-body p-3">
+                        <p>
+                            @Html.ActionLink("Thêm nhân viên", "AddNV")
+                        </p>
+                        <!-- Table with stripped rows -->
+                        <table class="table datatable p-5" style="font-size: small;">
+                            <thead>
+                                <tr>
+                                    <th>MSNV</th>
+                                    <th>Họ & Tên</th>
+                                    <th data-type="date" data-format="YYYY/DD/MM">Ngày sinh</th>
+                                    <th>Email</th>
+                                    <th>SĐT</th>
+                                    <th>Chức vụ</th>
+                                    <th>Địa chỉ</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var nv in sortedModel)
+                                {
+                                    <tr>
+                                        <td>@nv.MaNhanVien</td>
+                                        <td>@nv.HoTen</td>
+                                        <td>@Html.Raw(Truncate(Convert.ToString(nv.NgaySinh), 10).ToString())</td>
+                                        <td>@Html.Raw(Truncate(nv.Email, 8).ToString())</td>
+                                        <td>@nv.DienThoai</td>
+                                        <td>@nv.ChucVu</td>
+                                        <td>@Html.Raw(Truncate(nv.DiaChi, 20).ToString())</td>
+                                        <td>
+                                            <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#modal-@nv.MaNhanVien ">
+                                                Xem chi tiết
+                                            </button>
+                                            <!-- Hien form thong tin -->
+                                            <div class="modal fade" id="modal-@nv.MaNhanVien" tabindex="-1">
+                                                <div class="modal-dialog modal-dialog-centered">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="text-center">THÔNG TIN NHÂN VIÊN</h5>
+                                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <div>
+
+                                                                <!-- Nội dung hiện ở đây-->
+                                                                <p><strong>Mã nhân viên:</strong> @nv.MaNhanVien</p>
+                                                                <p><strong>Họ tên:</strong> @nv.HoTen</p>
+                                                                <p><strong>Ngày sinh:</strong> @nv.NgaySinh</p>
+                                                                <p><strong>Email:</strong> @nv.Email</p>
+                                                                <p><strong>Số điện thoại:</strong> @nv.DienThoai</p>
+                                                                <p><strong>Chức vụ:</strong> @nv.ChucVu</p>
+                                                                <p><strong>Địa chỉ:</strong> @nv.DiaChi</p>
+
+
+                                                            </div>
+                                                        </div>
+                                                        <!-- Inside your modal -->
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Trở lại</button>
+                                                            @using (Html.BeginForm("UpdateTrangThai", "Home", FormMethod.Post))
+                                                            {
+                                                                @Html.Hidden("maDatPhong", nv.MaNhanVien)
+                                                                if (nv.MaNhanVien == "Chờ xử lý")
+                                                                {
+                                                                    <button type="submit" class="btn btn-danger" name="action" value="TuChoi">Từ chối</button>
+                                                                    <button type="submit" class="btn btn-success" name="action" value="XetDuyet">Xét Duyệt</button>
+                                                                }
+                                                            }
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                            </div><!-- End Vertically centered Modal-->
+                                        </td>
+                                    </tr>
+                                }
+
+                            </tbody>
+                        </table>
+                        <!-- End Table with stripped rows -->
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+</main><!-- End #main -->

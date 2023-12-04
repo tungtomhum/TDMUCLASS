@@ -1,0 +1,141 @@
+﻿@model TDMUCLASS.Models.SINHVIEN
+
+@{
+    ViewBag.Title = "EditSV";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutHome.cshtml";
+}
+
+<main id="main" class="main">
+
+    <div class="pagetitle">
+        <h1>CẬP NHẬT THÔNG TIN SINH VIÊN</h1>
+        <nav>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="~/Admin/Home/Home">Admin</a></li>
+                <li class="breadcrumb-item">Home</li>
+                <li class="breadcrumb-item">Danh sách sinh viên</li>
+                <li class="breadcrumb-item active">Cập nhật thông tin Sinh viên</li>
+            </ol>
+        </nav>
+    </div><!-- End Page Title -->
+
+    <section class="section">
+        <div class="row">
+            <div class="col-lg-12">
+
+                <div class="card">
+                    <div class="card-body p-3">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">CẬP NHẬT THÔNG TIN SINH VIÊN</h5>
+                                @using (Html.BeginForm())
+                                {
+                                    @Html.AntiForgeryToken()
+
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="form-floating">
+                                                @Html.HiddenFor(model => model.MaSinhVien, new { @id = "masv" })
+                                                @Html.EditorFor(model => model.MaSinhVien, new { htmlAttributes = new { @class = "form-control", @placeholder = "Mã sinh viên", @required = "required" }})
+                                                <label for="masv">Mã sinh viên <b style="color:red; font-size: 10px;">(*)</b></label>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <div class="form-floating mb-3">
+                                                @Html.DropDownListFor(model => model.ChuyenNganh, new SelectList(new[] { "", "CNTT", "KET", "QTDN", "OTO" }), new { @class = "form-select", @id = "chuyennganh", @required = "required" })
+                                                <label for="chuyennganh">Chuyên ngành <b style="color:red; font-size: 10px;">(*)</b></label>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <div class="form-floating mb-3">
+                                                @Html.DropDownListFor(model => model.Lop, new SelectList(new[] { "", "D21CNTT01", "D21CNTT02", "D21CNTT03", "D21KET01", "D21KET02", "D21KET03", "D21QTDN01", "D21QTDN02", "D21QTDN03", "D21OTO01", "D21OTO02", "D21OTO03" }), new { @class = "form-select", @id = "lop", @required = "required" })
+                                                <label for="lop">Lớp <b style="color:red; font-size: 10px;">(*)</b></label>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-12">
+                                            <div class="form-floating">
+                                                @Html.EditorFor(model => model.HoTen, new { htmlAttributes = new { @class = "form-control", @placeholder = "Họ tên sinh viên", @required = "required" } })
+                                                <label for="hoten">Họ tên sinh viên <b style="color:red; font-size: 10px;">(*)</b></label>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-3">
+                                            <div class="form-floating">
+                                                @Html.EditorFor(model => model.NgaySinh, new { htmlAttributes = new { @class = "form-control", @type = "date", @placeholder = "Ngày sinh", @required = "required" } })
+                                                <label for="ngaysinh">Ngày sinh <b style="color:red; font-size: 10px;">(*)</b></label>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-5">
+                                            <div class="form-floating">
+                                                @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control", @placeholder = "Email", @required = "required" } })
+                                                <label for="email">Email <b style="color:red; font-size: 10px;">(*)</b></label>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <div class="form-floating">
+                                                @Html.EditorFor(model => model.DienThoai, new { htmlAttributes = new { @class = "form-control", @placeholder = "Số điện thoại", @required = "required" } })
+                                                <label for="sdt">Số điện thoại <b style="color:red; font-size: 10px;">(*)</b></label>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-12">
+                                            <div class="form-floating">
+                                                @Html.EditorFor(model => model.DiaChi, new { htmlAttributes = new { @class = "form-control", @placeholder = "Địa chỉ", @style = "height: 100px;", @required = "required" } })
+                                                <label for="floatingTextarea">Địa chỉ <b style="color:red; font-size: 10px;">(*)</b></label>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-12 text-center">
+                                            <button type="reset" class="btn btn-secondary">Hủy</button>
+                                            <button type="submit" class="btn btn-primary">Cập nhật</button>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+</main><!-- End #main -->
+<script>
+    // Chọn các phần tử DOM cần sử dụng
+    var chuyenNganhSelect = document.getElementById('chuyennganh');
+    var lopSelect = document.getElementById('lop');
+
+    // Mảng chứa danh sách lớp theo chuyên ngành
+    var lopData = {
+        'CNTT': ['D21CNTT01', 'D21CNTT02', 'D21CNTT03'],
+        'KET': ['D21KET01', 'D21KET02', 'D21KET03'],
+        'QTDN': ['D21QTDN01', 'D21QTDN02', 'D21QTDN03'],
+        'OTO': ['D21OTO01', 'D21OTO02', 'D21OTO03']
+    };
+
+    // Sự kiện khi chọn chuyên ngành
+    chuyenNganhSelect.addEventListener('change', function () {
+        // Lấy giá trị của chuyên ngành được chọn
+        var selectedChuyenNganh = chuyenNganhSelect.value;
+
+        // Xóa tất cả các option trong select lớp
+        lopSelect.innerHTML = '<option value="0"></option>';
+
+        // Nếu chuyên ngành được chọn tồn tại trong mảng dữ liệu
+        if (lopData.hasOwnProperty(selectedChuyenNganh)) {
+            // Lặp qua danh sách lớp của chuyên ngành và thêm vào select lớp
+            lopData[selectedChuyenNganh].forEach(function (lop) {
+                var option = document.createElement('option');
+                option.value = lop;
+                option.textContent = lop;
+                lopSelect.appendChild(option);
+            });
+        }
+    });
+</script>

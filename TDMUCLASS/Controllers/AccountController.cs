@@ -25,6 +25,22 @@ namespace TDMUCLASS.Controllers
 
         public ActionResult Home()
         {
+            // Kiểm tra xem người dùng đã đăng nhập hay chưa
+            if (Session["LoggedInUserId"] == null)
+            {
+                // Nếu chưa đăng nhập, chuyển hướng đến trang đăng nhập
+                return RedirectToAction("Login");
+            }
+            return View();
+        }
+        public ActionResult NhanVien()
+        {
+            // Kiểm tra xem người dùng đã đăng nhập hay chưa
+            if (Session["LoggedInUserId"] == null)
+            {
+                // Nếu chưa đăng nhập, chuyển hướng đến trang đăng nhập
+                return RedirectToAction("Login");
+            }
             return View();
         }
 
@@ -45,6 +61,7 @@ namespace TDMUCLASS.Controllers
 
             // Tìm kiếm tài khoản
             var user = db.TAIKHOANs.SingleOrDefault(t => t.TenDangNhap == acc.your_name);
+            var nv = db.BOPHANXULYSUCOs.FirstOrDefault(a=>a.MaNhanVien == acc.your_name);
 
             if (user != null)
             {
@@ -54,6 +71,7 @@ namespace TDMUCLASS.Controllers
                 string maSinhVienOrGiangVien = string.Empty;
                 string tenHocVienOrGiangVien = string.Empty;
                 string avatarPath = user.Avartar;
+                string chucvu = (nv != null) ? nv.ChucVu : string.Empty;
 
                 if (loaiTaiKhoan == "SV")
                 {
@@ -77,10 +95,22 @@ namespace TDMUCLASS.Controllers
                         tenHocVienOrGiangVien = lecturer.HoTen;
                     }
                 }
+                else if (loaiTaiKhoan == "NV")
+                {
+                    // Lấy thông tin nhan viên
+                    var lecturer = db.BOPHANXULYSUCOs.SingleOrDefault(g => g.MaNhanVien == acc.your_name);
+
+                    if (lecturer != null)
+                    {
+                        maSinhVienOrGiangVien = lecturer.MaNhanVien;
+                        tenHocVienOrGiangVien = lecturer.HoTen;
+                    }
+                }
 
                 Session["maSinhVienOrGiangVien"] = maSinhVienOrGiangVien;
                 Session["tenHocVienOrGiangVien"] = tenHocVienOrGiangVien;
                 Session["AvatarPath"] = avatarPath;
+                Session["chucvu"] = chucvu;
                 Session["loaitaikhoan"] = loaiTaiKhoan;
 
                 if (VerifyPassword(acc.your_pass, storedPassword))
@@ -92,6 +122,8 @@ namespace TDMUCLASS.Controllers
                         case "SV":
                         case "GV":
                             return RedirectToAction("Home", "Account");
+                        case "NV":
+                            return RedirectToAction("NhanVien", "Account");
                         default:
                             ViewBag.ErrorMessage = "Invalid account type.";
                             return View("Login");
@@ -128,6 +160,12 @@ namespace TDMUCLASS.Controllers
         [HttpGet]
         public ActionResult DatPhong()
         {
+            // Kiểm tra xem người dùng đã đăng nhập hay chưa
+            if (Session["LoggedInUserId"] == null)
+            {
+                // Nếu chưa đăng nhập, chuyển hướng đến trang đăng nhập
+                return RedirectToAction("Login");
+            }
             var viewModel = new DayHocPhongHoc
             {
                 DayHocData = db.DAYHOCs.ToList(),
@@ -160,6 +198,12 @@ namespace TDMUCLASS.Controllers
         }
         public ActionResult BookingHistory(int? page)
         {
+            // Kiểm tra xem người dùng đã đăng nhập hay chưa
+            if (Session["LoggedInUserId"] == null)
+            {
+                // Nếu chưa đăng nhập, chuyển hướng đến trang đăng nhập
+                return RedirectToAction("Login");
+            }
             int iPageNum = page ?? 1;
             int iPageSize = 100;
 
@@ -248,6 +292,87 @@ namespace TDMUCLASS.Controllers
             return RedirectToAction("BookingHistory"); // Chuyển hướng đến trang "BookingHistory"
         }
 
+        public ActionResult SuCoNV()
+        {
+            // Kiểm tra xem người dùng đã đăng nhập hay chưa
+            if (Session["LoggedInUserId"] == null)
+            {
+                // Nếu chưa đăng nhập, chuyển hướng đến trang đăng nhập
+                return RedirectToAction("Login");
+            }
+            // Lấy loại tài khoản và mã đăng nhập từ Session
+            string loaiTaiKhoan = Session["loaitaikhoan"] as string;
+            string maSinhVienOrGiangVien = Session["maSinhVienOrGiangVien"] as string;
+
+            List<PHANCONGXULY_SUCO> pcList;
+
+            if (loaiTaiKhoan == "NV")
+            {
+                // Lọc danh sách dựa vào mã sinh viên nếu là sinh viên
+                pcList = db.PHANCONGXULY_SUCOs
+                    .Where(dp => dp.MaNhanVien == maSinhVienOrGiangVien)
+                    .OrderBy(n => n.NgayGioPhanCong)
+                    .ToList();
+            }
+            else
+            {
+                // If the user is not a "NV" (Nhân viên), handle the case accordingly.
+                pcList = new List<PHANCONGXULY_SUCO>();
+            }
+
+            return View(pcList);
+        }
+
+        [HttpPost]
+        public ActionResult UpdateTrangThaiRB(int masuco, string action)
+        {
+            string maSinhVienOrGiangVien = Session["maSinhVienOrGiangVien"] as string;
+            if (maSinhVienOrGiangVien != null)
+            {
+                // Retrieve the DATPHONG record based on MaDatPhong
+                SUCOBAOTRI suco = db.SUCOBAOTRIs.SingleOrDefault(dp => dp.MaSuCoBaoTri == masuco);
+                PHANCONGXULY_SUCO pc = db.PHANCONGXULY_SUCOs.SingleOrDefault(i=>i.MaSuCoBaoTri == masuco);
+                QUANLY_TRANGTHIETBI qlttb = db.QUANLY_TRANGTHIETBIs.FirstOrDefault(a => a.MaTrangThietBi == suco.MaTrangThietBi);
+                if (suco != null)
+                {
+                    // Update the TrangThai based on the action
+                    if (action == "TiepNhan")
+                    {
+                        pc.TrangThaiXuLy = "Đã tiếp nhận";
+                        suco.TinhTrangXuLy = "Đang xử lý";
+                    }
+                    else if(action == "TuChoi")
+                    {
+                        pc.TrangThaiXuLy = "Đã từ chối";
+                        suco.TinhTrangXuLy = "Từ chối";
+                    }
+                    else if (action == "HoanThanh")
+                    {
+                        qlttb.TinhTrang = "Tốt";
+                        pc.TrangThaiXuLy = "Xử lý thành công";
+                        suco.TinhTrangXuLy = "Xử lý thành công";
+                        pc.NgayGioHoanThanh = DateTime.Now;
+                    }
+
+                    // Save changes to the database
+                    db.SubmitChanges();
+                }
+
+                // Redirect back to the DSDatPhong action
+                return RedirectToAction("SuCoNV");
+            }
+
+            // If the user is not logged in, you might want to redirect them to the login page or handle it accordingly.
+            return RedirectToAction("Login");
+        }
+
+
+
+
+
+
+
+
 
 
 
@@ -266,7 +391,8 @@ namespace TDMUCLASS.Controllers
             List<QUANLY_TRANGTHIETBI> temporaryList = new List<QUANLY_TRANGTHIETBI>();
 
             // Chuỗi kết nối đến cơ sở dữ liệu SQL Server
-            string connectionString = "Data Source=LAPTOP-SD6JFUCG\\MSSQLSERVER01;Initial Catalog=TDMUCLASS;Integrated Security=True";
+            string connectionString = "Data Source=SQL8006.site4now.net;Initial Catalog=db_aa22c6_tdmuclass;User ID=db_aa22c6_tdmuclass_admin;Password=tdmuclass123";
+            //string connectionString = "Data Source=LAPTOP-SD6JFUCG\\MSSQLSERVER01;Initial Catalog=TDMUCLASS;Integrated Security=True";
 
             // Tạo kết nối đến cơ sở dữ liệu
             using (SqlConnection connection = new SqlConnection(connectionString))
@@ -322,8 +448,10 @@ namespace TDMUCLASS.Controllers
         [ValidateInput(false)]
         public ActionResult BaoCaoSuCo(SUCOBAOTRI baocaosuco, FormCollection f, HttpPostedFileBase fFileUpload)
         {
+            QUANLY_TRANGTHIETBI qlttb = db.QUANLY_TRANGTHIETBIs.FirstOrDefault(a => a.MaTrangThietBi == f["maTTB"]);
             if (ModelState.IsValid)
             {
+                qlttb.TinhTrang = "Gặp sự cố";
                 // ... Các dòng code khác không thay đổi
                 baocaosuco.MaPhongHoc = f["maPhongHoc"];
                 baocaosuco.MoTaSuCo = f["moTaSuCo"];
@@ -594,6 +722,12 @@ namespace TDMUCLASS.Controllers
                 ViewBag.ErrorMessage = $"Lỗi kết nối cơ sở dữ liệu: {ex.Message}";
                 return PartialView("Error");
             }
+        }
+        // Phương thức kiểm tra trạng thái đăng nhập
+        private bool IsUserLoggedIn()
+        {
+            // Kiểm tra xem Session["LoggedInUserId"] có giá trị hay không
+            return Session["LoggedInUserId"] != null;
         }
 
     }

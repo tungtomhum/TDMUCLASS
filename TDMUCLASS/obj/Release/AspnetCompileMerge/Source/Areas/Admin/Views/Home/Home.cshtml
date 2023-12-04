@@ -1,0 +1,152 @@
+﻿
+@{
+    ViewBag.Title = "Home";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutHome.cshtml";
+}
+
+<main id="main" class="main">
+
+    <div class="pagetitle">
+        <h1>TRANG CHỦ</h1>
+        <nav>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="~/Admin/Home/Home">Admin</a></li>
+                <li class="breadcrumb-item active">Home</li>
+            </ol>
+        </nav>
+    </div><!-- End Page Title -->
+
+    <section class="section dashboard">
+        <div class="row">
+            <!-- Left side columns -->
+            <div class="col-lg-12">
+                <div class="row">
+
+                    <!-- DatPhong Card -->
+                    <div class="col-xxl-6 col-md-12">
+                        <div class="card info-card revenue-card">
+                            <div class="card-body">
+                                <h5 class="card-title">ĐẶT PHÒNG <span>| Hôm nay</span></h5>
+
+                                <div class="d-flex align-items-center">
+                                    <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                                        <i class="ri-home-3-line"></i>
+                                    </div>
+                                    <div class="ps-3">
+                                        <h6>@ViewBag.DatPhongCount</h6>
+                                        <span class="text-muted small pt-2 ps-1">Phòng chờ xử lý</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div><!-- End Sales Card -->
+                    <!-- Revenue Card -->
+                    <div class="col-xxl-6 col-md-12">
+                        <div class="card info-card customers-card">
+
+                            <div class="card-body">
+                                <h5 class="card-title">SỰ CỐ BẢO TRÌ <span>| Hôm nay</span></h5>
+
+                                <div class="d-flex align-items-center">
+                                    <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                                        <i class="ri-alarm-warning-fill"></i>
+                                    </div>
+                                    <div class="ps-3">
+                                        <h6>@ViewBag.SuCoBaoTriCount</h6>
+                                        <span class="text-muted small pt-2 ps-1">Sự cố chờ xử lý</span>
+
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div><!-- End Revenue Card -->
+                    <!-- Reports -->
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">THỐNG KÊ </h5>
+
+                                <!-- Line Chart -->
+                                <div id="reportsChart"></div>
+
+                                <script>
+                                    document.addEventListener("DOMContentLoaded", () => {
+                                        // Hàm để tạo mảng ngày từ tháng 10 đến hết tháng 12 năm nay
+                                        function generateDateArray() {
+                                            const currentDate = new Date();
+                                            const currentYear = currentDate.getFullYear();
+
+                                            // Tạo mảng ngày từ tháng 10 đến hết tháng 12 năm nay
+                                            const dateArray = [];
+                                            for (let month = 1; month <= 12; month++) {
+                                                for (let day = 1; day <= new Date(currentYear, month, 0).getDate(); day++) {
+                                                    const formattedDate = `${currentYear}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
+                                                    dateArray.push(formattedDate);
+                                                }
+                                            }
+
+                                            return dateArray;
+                                        }
+
+                                        new ApexCharts(document.querySelector("#reportsChart"), {
+                                            series: [{
+                                                name: 'Đặt phòng',
+                                                data: [31, 40, 28, 51, 42, 82, 56],
+                                            }, {
+                                                name: 'Báo cáo sự cố',
+                                                data: [11, 32, 45, 32, 34, 52, 41]
+                                            }],
+                                            chart: {
+                                                height: 350,
+                                                type: 'area',
+                                                toolbar: {
+                                                    show: true
+                                                },
+                                            },
+                                            markers: {
+                                                size: 4
+                                            },
+                                            colors: ['#2eca6a', '#ff771d'],
+                                            fill: {
+                                                type: "gradient",
+                                                gradient: {
+                                                    shadeIntensity: 1,
+                                                    opacityFrom: 0.3,
+                                                    opacityTo: 0.4,
+                                                    stops: [0, 90, 100]
+                                                }
+                                            },
+                                            dataLabels: {
+                                                enabled: true
+                                            },
+                                            stroke: {
+                                                curve: 'smooth',
+                                                width: 2
+                                            },
+                                            xaxis: {
+                                                type: 'date',
+                                                categories: generateDateArray()
+                                            },
+                                            tooltip: {
+                                                x: {
+                                                    format: 'dd/MM/yy'
+                                                },
+                                            }
+                                        }).render();
+                                    });
+                                </script>
+
+                                <!-- End Line Chart -->
+                            </div>
+                        </div>
+                    </div>
+                    <!-- End Reports -->
+
+
+                </div>
+            </div><!-- End Left side columns -->
+        </div>
+    </section>
+
+</main><!-- End #main -->

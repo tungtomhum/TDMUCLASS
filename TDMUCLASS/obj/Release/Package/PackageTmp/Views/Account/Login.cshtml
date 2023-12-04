@@ -1,0 +1,141 @@
+﻿                         
+@{
+    ViewBag.Title = "Đăng nhập";
+    Layout = "~/Views/Shared/_LayoutAccount.cshtml";
+}
+
+<style>
+    .sign-in {
+        padding-top: 50px;
+    }
+
+    .form-title {
+        text-align: center;
+    }
+
+    img {
+        margin-top: 50px;
+    }
+    .form-group {
+        position: relative;
+    }
+    /* CSS cho nút toggle */
+    .toggle-password {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        cursor: pointer;
+        transition: transform 0.2s ease;
+    }
+
+        /* CSS cho biểu tượng "eye" */
+        .toggle-password i {
+            transition: transform 0.2s ease;
+        }
+
+        /* Hiệu ứng khi hover */
+        .toggle-password:hover {
+            transform: translateY(-50%) scale(1.2); /* Scale to make it slightly bigger on hover */
+        }
+
+            .toggle-password:hover i {
+                transform: scale(1.2); /* Scale the icon on hover */
+            }
+
+
+</style>
+
+<section class="sign-in">
+    <div class="container">
+        <div class="signin-content">
+            <div class="signin-image">
+                <figure><a href="~/TDMUCLASS/Home"><img src="~/img/LOGIN.png" alt="sing up image"></a></figure>
+                <a href="~/TaiKhoan/DangKy" class="signup-image-link">Create an account</a>
+            </div>
+
+            <div class="signin-form">
+                <h2 class="form-title">LOG IN</h2>
+                @if (!string.IsNullOrEmpty(ViewBag.ErrorMessage))
+                {
+                    <div class="alert alert-danger" style="color: red; padding-bottom: 10px;">@ViewBag.ErrorMessage</div>
+                }
+                <form action="Home" method="POST" class="register-form" id="login-form">
+                    <div class="form-group">
+                        <label for="your_name"><i class="zmdi zmdi-account material-icons-name"></i></label>
+                        <input type="text" name="your_name" id="your_name" placeholder="Your Name" />
+                    </div>
+                    <div class="form-group">
+                        <label for="your_pass"><i class="zmdi zmdi-lock"></i></label>
+                        <input type="password" name="your_pass" id="your_pass" placeholder="Password" />
+                        <span class="toggle-password" id="toggle-password"><i class="zmdi zmdi-eye"></i></span>
+                    </div>
+                    <div class="form-group">
+                        <input type="checkbox" name="remember-me" id="remember-me" class="agree-term" />
+                        <label for="remember-me" class="label-agree-term"><span><span></span></span>Remember me</label>
+                    </div>
+                    <div class="form-group form-button">
+                        <input type="submit" name="signin" id="signin" class="form-submit" value="Log in" />
+                    </div>
+                </form>
+                <div class="social-login">
+                    <span class="social-label">
+                        Login with admin
+                    </span>
+                    <a style="margin-top: -50px;" href="~/Admin/Home/Login"><img style=" width: 50%;" src="~/assetsAdmin/img/admin_logo.png" alt="Alternate Text" /></a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const passwordField = document.getElementById("your_pass");
+        const togglePasswordButton = document.getElementById("toggle-password");
+
+        togglePasswordButton.addEventListener("click", function () {
+            const type = passwordField.getAttribute("type") === "password" ? "text" : "password";
+            passwordField.setAttribute("type", type);
+
+            // Thay đổi biểu tượng icon
+            const icon = togglePasswordButton.querySelector("i");
+            if (type === "password") {
+                icon.classList.remove("zmdi-eye-off");
+                icon.classList.add("zmdi-eye");
+            } else {
+                icon.classList.remove("zmdi-eye");
+                icon.classList.add("zmdi-eye-off");
+            }
+        });
+    });
+    document.addEventListener("DOMContentLoaded", function () {
+        const passwordField = document.getElementById("your_pass");
+        const togglePasswordButton = document.getElementById("toggle-password");
+        const rememberMeCheckbox = document.getElementById("remember-me");
+        const usernameField = document.getElementById("your_name");
+
+        // Kiểm tra xem trạng thái đăng nhập đã được lưu trữ hay chưa
+        const savedUsername = localStorage.getItem("username");
+        const savedRememberMe = localStorage.getItem("rememberMe");
+
+        if (savedUsername && savedRememberMe === "true") {
+            usernameField.value = savedUsername;
+            rememberMeCheckbox.checked = true;
+        }
+
+        togglePasswordButton.addEventListener("click", function () {
+            // Lưu trạng thái đăng nhập và thông tin người dùng đã đăng nhập
+            const isRememberMe = rememberMeCheckbox.checked;
+            if (isRememberMe) {
+                localStorage.setItem("username", usernameField.value);
+                localStorage.setItem("rememberMe", "true");
+            } else {
+                localStorage.removeItem("username");
+                localStorage.removeItem("rememberMe");
+            }
+        });
+    });
+
+</script>
+
+

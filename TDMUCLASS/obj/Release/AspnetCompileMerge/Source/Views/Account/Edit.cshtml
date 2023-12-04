@@ -1,0 +1,131 @@
+﻿@model TDMUCLASS.Models.DATPHONG
+
+
+@{
+    ViewBag.Title = "Sửa thông tin đặt phòng";
+
+    if (Session["loaitaikhoan"] != null)
+    {
+        if (Session["loaitaikhoan"].ToString() == "SV")
+        {
+            Layout = "~/Views/Shared/_LayoutStudent.cshtml";
+        }
+        else if (Session["loaitaikhoan"].ToString() == "GV")
+        {
+            Layout = "~/Views/Shared/_LayoutTeacher.cshtml";
+        }
+        else
+        {
+            Layout = "~/Views/Shared/_LayoutShared.cshtml";
+        }
+    }
+    else
+    {
+        Layout = "~/Views/Shared/_LayoutShared.cshtml";
+    }
+}
+
+<style>
+    .formdp {
+        border: 1px dotted rgb(50, 244, 104);
+        border-radius: 5%;
+        background-color: rgb(239, 253, 245);
+    }
+
+    .khoitt {
+        padding: 30px;
+    }
+
+        .khoitt label {
+            padding-top: 20px;
+        }
+
+    #autoHeightTextarea {
+        height: 100px;
+    }
+</style>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <div class="container formdp" id="bookingForm" style="width: 90%; margin-top: 50px;">
+            <h2 style=" margin-top: 30px; text-align: center; text-transform: uppercase;">Chỉnh sửa Thông tin đặt phòng</h2>
+            <div class="row">
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                @Html.HiddenFor(model => model.MaDatPhong)
+                <div class="col-md-6">
+                    <!-- Phần 1 - Thông tin người đặt phòng -->
+                    <div class="mb-3 khoitt">
+                        @if (Session["loaitaikhoan"] != null)
+                        {
+                            if (Session["loaitaikhoan"].ToString() == "SV")
+                            {
+                                <label for="maSinhVien">Mã Sinh Viên:</label>
+                                <div class="col-md-10">
+                                    <input type="text" class="form-control" name="iMaGV" value="@Model.MaSinhVien" readonly />
+                                </div>
+
+                                <label for="tenHocVien">Tên Sinh Viên:</label>
+                                <div class="col-md-10">
+                                    <laber type="text" class="form-control" id="tenHocVien" name="tenHocVien">@Session["tenHocVienOrGiangVien"].ToString()</laber>
+                                </div>
+                            }
+                            else if (Session["loaitaikhoan"].ToString() == "GV")
+                            {
+                                <label for="maGiangVien">Mã Giảng Viên:</label>
+                                <div class="col-md-10">
+                                    <input type="text" class="form-control" name="iMaGV" value="@Model.MaGiangVien" readonly />
+                                </div>
+
+                                <label for="tenGiangVien">Tên Giảng Viên:</label>
+                                <div class="col-md-10">
+                                    <laber type="text" class="form-control" id="tenHocVien" name="tenHocVien" disabled>@Session["tenHocVienOrGiangVien"].ToString()</laber>
+                                </div>
+                            }
+                        }
+                        <label for="moTa">Mô Tả:</label>
+                        <div class="col-md-10">
+                            <textarea id="autoHeightTextarea" type="text" class="form-control" name="mota">@Model.MoTa</textarea>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <!-- Phần 2 - Các thông tin khác -->
+                    <div class="mb-3 khoitt">
+                        <label for="maPhongHoc">Mã phòng học:</label>
+                        <div class="col-md-10">
+                            <input type="text" class="form-control" name="iMaPH" value="@Model.MaPhongHoc" readonly />
+                        </div>
+
+                        <label for="ngaybd">Từ ngày:</label>
+                        <div class="col-md-10">
+                            <input type="text" class="form-control" name="ngaybd" value="@Model.NgayBD">
+                        </div>
+
+                        <label for="ngaykt">Đến ngày:</label>
+                        <div class="col-md-10">
+                            <input type="text" class="form-control" name="ngaykt" value="@Model.NgayKT">
+                        </div>
+
+                        <input type="text" class="form-control" name="trangThai" value="@Model.TrangThai" id="trangThai" style="display:none;">
+
+                        <input type="text" class="form-control" name="maQuanLy" value="@Model.MaQuanLy" id="maQuanLy" style="display:none;">
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12 text-end" style="padding: 0px 20px 40px 0px;">
+                <!-- Thay đổi thành text-end để căn chỉnh nút ở góc phải -->
+                <button type="submit" class="btn btn-primary" style="margin-right:10px;" id="submitButton">Cập nhật</button>
+                <button type="button" class="btn btn-secondary" id="cancelButton">Trở lại</button>
+            </div>
+        </div>
+    </div>
+}
+<script>
+    document.getElementById("cancelButton").addEventListener("click", function () {
+        window.location.href = "@Url.Action("BookingHistory", "Account")";
+    });
+</script>

@@ -1,0 +1,156 @@
+﻿@model List<TDMUCLASS.Models.PHANCONGXULY_SUCO>
+
+@{
+    ViewBag.Title = "SuCoNV";
+    Layout = "~/Views/Shared/_LayoutNhanVien.cshtml";
+}
+
+@*Xây dựn một helper tùy chỉnh để cắt độ dài chuỗi*@
+@helper Truncate(string s, int length)
+{
+    if (s.Length < length)
+    {
+        @s
+    }
+    else
+    {
+        @s.Substring(0, length)<text>...</text>
+    }
+
+}
+
+<style>
+
+    #imagePreview {
+        position: relative;
+        padding-top: 20px;
+        max-width: 500px; /* Đặt chiều rộng tối đa của div */
+        overflow: hidden; /* Ẩn phần vượt quá kích thước của div */
+    }
+
+    #previewImage {
+        max-width: 100%; /* Đảm bảo ảnh không vượt quá chiều rộng của div */
+        height: auto; /* Để duy trì tỉ lệ khung hình */
+        display: block; /* Không để ảnh bị đẩy xuống dòng mới */
+        margin: 0 auto; /* Căn giữa ảnh trong div */
+    }
+</style>
+
+<main id="main" class="main">
+
+    <div class="pagetitle">
+        <h1>DANH SÁCH SỰ CỐ BẢO TRÌ</h1>
+        <nav>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="~/Account/NhanVien">Nhân viên</a></li>
+                <li class="breadcrumb-item">Home</li>
+                <li class="breadcrumb-item active">Danh sách Sự cố bảo trì</li>
+            </ol>
+        </nav>
+    </div><!-- End Page Title -->
+
+    <section class="section">
+        <div class="row">
+            <div class="col-lg-12">
+
+                <div class="card">
+                    <div class="card-body p-3">
+
+                        <!-- Table with stripped rows -->
+                        <table class="table datatable p-5">
+                            <thead>
+                                <tr>
+                                    <th>Mã sự cố</th>
+                                    <th>Mô tả sự cố</th>
+                                    <th>Mã phòng</th>
+                                    <th data-type="date" data-format="YYYY/DD/MM">Ngày phân công</th>
+                                    <th data-type="date" data-format="YYYY/DD/MM">Ngày hoàn thành</th>
+                                    <th>Tình trạng</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var suco in Model)
+                                {
+                                    <tr>
+                                        <td>@suco.MaSuCoBaoTri</td>
+                                        <td>@Html.Raw(Truncate(suco.MoTa, 10).ToString())</td>
+                                        <td>@suco.MaPhongHoc</td>
+                                        <td>@suco.NgayGioPhanCong</td>
+                                        <td>@suco.NgayGioHoanThanh</td>
+                                        <td>@suco.TrangThaiXuLy</td>
+                                        <td>
+                                            <button type="button" class="btn btn-info btnDetail" data-bs-toggle="modal" data-bs-target="#modal-@suco.MaSuCoBaoTri">
+                                                <i class="b-regular bi-eye" style="color: #ffffff;"></i>
+                                            </button>
+                                            @using (Html.BeginForm("UpdateTrangThaiRB", "Account", FormMethod.Post))
+                                            {
+                                                @Html.Hidden("masuco", suco.MaSuCoBaoTri)
+                                                if (suco.TrangThaiXuLy == "Đã tiếp nhận")
+                                                {
+                                                    <button type="submit" class="btn btn-success" name="action" value="HoanThanh">
+                                                        <i class="b-solid bi-clipboard-check" style="color: #ffffff;"></i>
+                                                    </button>
+                                                }
+                                            }
+
+
+
+                                            <!-- Hien form thong tin -->
+                                            <div class="modal fade" id="modal-@suco.MaSuCoBaoTri" tabindex="-1">
+                                                <div class="modal-dialog modal-dialog-centered">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="text-center">THÔNG TIN SỰ CỐ</h5>
+                                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <!-- Nội dung hiện ở đây-->
+                                                            <p><strong>Người phân công:    </strong> @suco.MaQuanLy</p>
+                                                            <p><strong>Mã sự cố:           </strong> @suco.MaSuCoBaoTri</p>
+                                                            <p><strong>Mô tả:              </strong> @suco.MoTa</p>
+                                                            <p>
+                                                                <strong>Ảnh sự cố:          </strong>
+                                                                <div id="imagePreview">
+                                                                    <img style="height: 80%; width:80%;" src="~/img/@suco.AnhSuCo" id="previewImage" alt="Ảnh xem trước">
+                                                                </div>
+                                                            </p>
+                                                            <p><strong>Mã phòng học:       </strong> @suco.MaPhongHoc</p>
+                                                            <p><strong>Thời gian phân công:</strong> @suco.NgayGioPhanCong</p>
+                                                            @if (suco.TrangThaiXuLy == "Xử lý thành công")
+                                                            {
+                                                                <p><strong>Thời gian hoàn thành:</strong> @suco.NgayGioHoanThanh</p>
+                                                            }
+                                                            <p><strong>Trạng thái:         </strong> @suco.TrangThaiXuLy</p>
+                                                        </div>
+
+                                                        <!-- Inside your modal -->
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Trở lại</button>
+                                                            @using (Html.BeginForm("UpdateTrangThaiRB", "Account", FormMethod.Post))
+                                                            {
+                                                                @Html.Hidden("masuco", suco.MaSuCoBaoTri)
+                                                                if (suco.TrangThaiXuLy == "Đang chờ xử lý")
+                                                                {
+                                                                    <button type="submit" class="btn btn-danger" name="action" value="TuChoi">Từ chối</button>
+                                                                    <button type="submit" class="btn btn-primary" name="action" value="TiepNhan">Tiếp nhận</button>
+                                                                }
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div><!-- End Vertically centered Modal-->
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                        <!-- End Table with stripped rows -->
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+</main><!-- End #main -->

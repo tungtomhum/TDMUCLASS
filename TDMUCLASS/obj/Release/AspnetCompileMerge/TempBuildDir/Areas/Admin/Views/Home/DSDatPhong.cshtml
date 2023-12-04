@@ -1,0 +1,133 @@
+﻿@model IEnumerable<TDMUCLASS.Models.DATPHONG>
+
+@{
+    ViewBag.Title = "DSDatPhong";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutHome.cshtml";
+    // Sort the data by NgayBD (start date)
+    var sortedModel = Model.OrderBy(item => item.TrangThai);
+}
+@*Xây dựn một helper tùy chỉnh để cắt độ dài chuỗi*@
+@helper Truncate(string s, int length)
+{
+    if (s.Length < length)
+    {
+        @s
+    }
+    else
+    {
+        @s.Substring(0, length)<text>...</text>
+}
+
+}
+
+
+
+<main id="main" class="main">
+
+    <div class="pagetitle">
+        <h1>DANH SÁCH ĐẶT PHÒNG HỌC</h1>
+        <nav>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="~/Admin/Home/Home">Admin</a></li>
+                <li class="breadcrumb-item">Home</li>
+                <li class="breadcrumb-item active">Danh sách Đặt phòng</li>
+            </ol>
+        </nav>
+    </div><!-- End Page Title -->
+
+    <section class="section">
+        <div class="row">
+            <div class="col-lg-12">
+
+                <div class="card">
+                    <div class="card-body p-3">
+
+                        <!-- Table with stripped rows -->
+                        <table class="table datatable p-5">
+                            <thead>
+                                <tr>
+                                    <th>Mã phòng học</th>
+                                    <th data-type="date" data-format="YYYY/DD/MM">Ngày bắt đầu</th>
+                                    <th data-type="date" data-format="YYYY/DD/MM">Ngày kết thúc</th>
+                                    <th>Mô tả</th>
+                                    <th>Trạng thái</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var datphong in sortedModel)
+                                {
+                                    <tr>
+                                        <td>@datphong.MaPhongHoc</td>
+                                        <td>@datphong.NgayBD</td>
+                                        <td>@datphong.NgayKT</td>
+                                        <td>@Html.Raw(Truncate(datphong.MoTa, 10).ToString())</td>
+                                        <td>@datphong.TrangThai</td>
+                                        <td>
+                                            <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#modal-@datphong.MaPhongHoc">
+                                                Xem chi tiết
+                                            </button>
+                                            <!-- Hien form thong tin -->
+                                            <div class="modal fade" id="modal-@datphong.MaPhongHoc" tabindex="-1">
+                                                <div class="modal-dialog modal-dialog-centered">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="text-center">THÔNG TIN ĐẶT PHÒNG</h5>
+                                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <div>
+
+                                                                <!-- Nội dung hiện ở đây-->
+                                                                @if (!string.IsNullOrEmpty(datphong.MaGiangVien))
+                                                                {
+                                                                    <p><strong>Mã giảng viên:</strong> @datphong.MaGiangVien</p>
+                                                                    <p><strong>Họ tên giảng viên:</strong> @ViewBag.HoTenDictionary[datphong.MaGiangVien]</p>
+                                                                }
+                                                                else if (!string.IsNullOrEmpty(datphong.MaSinhVien))
+                                                                {
+                                                                    <p><strong>Mã sinh viên:</strong> @datphong.MaSinhVien</p>
+                                                                    <p><strong>Họ tên sinh viên:</strong> @ViewBag.HoTenDictionary[datphong.MaSinhVien]</p>
+                                                                }
+                                                                <p><strong>Mã phòng học:</strong> @datphong.MaPhongHoc</p>
+                                                                <p><strong>Ngày bắt đầu:</strong> @datphong.NgayBD</p>
+                                                                <p><strong>Ngày kết thúc:</strong> @datphong.NgayKT</p>
+                                                                <p><strong>Mô tả:</strong> @datphong.MoTa</p>
+                                                                <p><strong>Trạng thái:</strong> @datphong.TrangThai</p>
+
+
+                                                            </div>
+                                                        </div>
+                                                        <!-- Inside your modal -->
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Trở lại</button>
+                                                            @using (Html.BeginForm("UpdateTrangThai", "Home", FormMethod.Post))
+                                                            {
+                                                                @Html.Hidden("maDatPhong", datphong.MaDatPhong)
+                                                                    if (datphong.TrangThai == "Chờ xử lý")
+                                                                    {
+                                                                        <button type="submit" class="btn btn-danger" name="action" value="TuChoi">Từ chối</button>
+                                                                        <button type="submit" class="btn btn-success" name="action" value="XetDuyet">Xét Duyệt</button>
+                                                                    }
+                                                                }
+                                                            </div>
+
+                                                    </div>
+                                                </div>
+                                            </div><!-- End Vertically centered Modal-->
+                                        </td>
+                                    </tr>
+                                }
+
+                            </tbody>
+                        </table>
+                        <!-- End Table with stripped rows -->
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+</main><!-- End #main -->

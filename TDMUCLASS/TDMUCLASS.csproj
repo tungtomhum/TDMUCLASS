@@ -143,6 +143,8 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>dbTDMUCLASS.dbml</DependentUpon>
     </Compile>
+    <Compile Include="Models\QuanLyTTBViewModel.cs" />
+    <Compile Include="Models\SuLyModel.cs" />
     <Compile Include="Models\ThoiKhoaBieuViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -538,10 +540,22 @@
     <Content Include="Content\Site.css" />
     <Content Include="img\404.png" />
     <Content Include="img\about.png" />
+    <Content Include="img\atht.jpg" />
+    <Content Include="img\bang.jpg" />
     <Content Include="img\baocaosuco.png" />
+    <Content Include="img\bcc.png" />
+    <Content Include="img\bggv.png" />
+    <Content Include="img\bgph.jpg" />
+    <Content Include="img\bgpm.jpg" />
+    <Content Include="img\bgth.jpg" />
+    <Content Include="img\bgvp.jpg" />
     <Content Include="img\chaomungGV.jpg" />
     <Content Include="img\chaomungSV.jpg" />
     <Content Include="img\datphong.png" />
+    <Content Include="img\dctn.jpg" />
+    <Content Include="img\den.jpg" />
+    <Content Include="img\ght.png" />
+    <Content Include="img\GV.png" />
     <Content Include="img\header0.jpg" />
     <Content Include="img\header1.jpg" />
     <Content Include="img\header2.jpg" />
@@ -549,14 +563,25 @@
     <Content Include="img\header4.jpg" />
     <Content Include="img\header5.jpg" />
     <Content Include="img\khungdp.png" />
+    <Content Include="img\lebht.jpg" />
     <Content Include="img\LOGIN.png" />
     <Content Include="img\logo-nav .png" />
+    <Content Include="img\mc.jpg" />
+    <Content Include="img\micp.jpg" />
+    <Content Include="img\min.jpg" />
+    <Content Include="img\ml.jpg" />
+    <Content Include="img\mln.jpg" />
+    <Content Include="img\mtb.jpg" />
+    <Content Include="img\NV.png" />
+    <Content Include="img\onap.jpg" />
+    <Content Include="img\qt.jpg" />
     <Content Include="img\quanlyhethong.png" />
     <Content Include="img\signin-image.jpg" />
     <Content Include="img\signup-image.jpg" />
     <Content Include="img\SIGNUP.png" />
     <Content Include="img\GV02.jpg" />
     <Content Include="img\GV01.jpg" />
+    <Content Include="img\SV.png" />
     <Content Include="img\SV01.jpg" />
     <Content Include="img\SV02.jpg" />
     <Content Include="img\thoikhoabieu.png" />
@@ -569,6 +594,7 @@
     <Content Include="img\tin7.jpg" />
     <Content Include="img\tin8.jpg" />
     <Content Include="img\tin9.jpg" />
+    <Content Include="img\tv.jpg" />
     <Content Include="img\user.png" />
     <Content Include="img\userGV.png" />
     <Content Include="img\userSV.png" />
@@ -2633,6 +2659,15 @@
     <Content Include="dist\js\adminlte.min.js.map" />
     <Content Include="Areas\Admin\Views\Home\DSDatPhong.cshtml" />
     <Content Include="Areas\Admin\Views\Home\DSSuCo.cshtml" />
+    <Content Include="Areas\Admin\Views\Shared\_SelectedHoTenInfo.cshtml" />
+    <Content Include="Areas\Admin\Views\Home\QLSinhVien.cshtml" />
+    <Content Include="Areas\Admin\Views\Home\QLGiangVien.cshtml" />
+    <Content Include="Areas\Admin\Views\Home\QLNhanVien.cshtml" />
+    <Content Include="Areas\Admin\Views\Home\AddSV.cshtml" />
+    <Content Include="Areas\Admin\Views\Home\AddGV.cshtml" />
+    <Content Include="Areas\Admin\Views\Home\AddNV.cshtml" />
+    <Content Include="Areas\Admin\Views\Home\EditSV.cshtml" />
+    <Content Include="Areas\Admin\Views\Home\QuanLyTTB.cshtml" />
     <None Include="Models\dbTDMUCLASS.dbml.layout">
       <DependentUpon>dbTDMUCLASS.dbml</DependentUpon>
     </None>
@@ -2698,6 +2733,8 @@
     <Content Include="plugins\summernote\summernote.js.map" />
     <Content Include="plugins\summernote\summernote.min.js.map" />
     <Content Include="plugins\toastr\toastr.js.map" />
+    <None Include="Properties\PublishProfiles\tdmuclass-001-site1 - FTP.pubxml" />
+    <None Include="Properties\PublishProfiles\tdmuclass-001-site1 - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-3.4.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.4.1.js" />
     <Content Include="Scripts\jquery-3.4.1.min.js" />
@@ -2815,8 +2852,6 @@
     <Content Include="Views\Shared\_LayoutStudent.cshtml" />
     <Content Include="Views\Account\Error.cshtml" />
     <Content Include="Views\Shared\_LayoutTeacher.cshtml" />
-    <Content Include="Views\Account\ViewAdmin.cshtml" />
-    <Content Include="Views\Account\ViewStaff.cshtml" />
     <Content Include="Views\Shared\NavPartialUserSV.cshtml" />
     <Content Include="Views\Shared\GioiThieuPartial.cshtml" />
     <Content Include="Views\TDMUCLASS\Home.cshtml" />
@@ -2839,6 +2874,10 @@
     <Content Include="Views\TDMUCLASS\test.cshtml" />
     <Content Include="Views\Shared\TKBDatPhongGV.cshtml" />
     <Content Include="Views\Shared\TKBDatPhongSV.cshtml" />
+    <Content Include="Views\Shared\_LayoutNhanVien.cshtml" />
+    <Content Include="Views\Account\NhanVien.cshtml" />
+    <Content Include="Views\Shared\NavPartialUserNV.cshtml" />
+    <Content Include="Views\Account\SuCoNV.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

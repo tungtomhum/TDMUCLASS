@@ -1,0 +1,99 @@
+﻿@model TDMUCLASS.Models.BOPHANXULYSUCO
+
+@{
+    ViewBag.Title = "Thêm Nhân viên";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutHome.cshtml";
+}
+
+
+
+<main id="main" class="main">
+
+    <div class="pagetitle">
+        <h1>THÊM NHÂN VIÊN</h1>
+        <nav>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="~/Admin/Home/Home">Admin</a></li>
+                <li class="breadcrumb-item">Home</li>
+                <li class="breadcrumb-item">Danh sách nhân viên</li>
+                <li class="breadcrumb-item active">Thêm Nhân viên</li>
+            </ol>
+        </nav>
+    </div><!-- End Page Title -->
+
+    <section class="section">
+        <div class="row">
+            <div class="col-lg-12">
+
+                <div class="card">
+                    <div class="card-body p-3">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">THÔNG TIN NHÂN VIÊN</h5>
+
+                                <!-- Floating Labels Form -->
+                                <form class="row g-3 m-4" action="@Url.Action("AddNV", "Home")" method="post">
+                                    <div class="col-md-4">
+                                        <div class="form-floating">
+                                            <input type="text" class="form-control" id="masv" name="fMaNV" placeholder="Mã nhân viên" required>
+                                            <label for="masv">Mã nhân viên <b style="color:red; font-size: 10px;">(*)</b></label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-floating mb-3">
+                                            <select class="form-select" id="chuyennganh" aria-label="Chức vụ" name="fChucVu" required>
+                                                <option value="0"></option>
+                                                <option value="NV phòng máy">NV phòng máy</option>
+                                                <option value="NV thiết bị điện">NV thiết bị điện</option>
+                                                <option value="NV dụng cụ, trang thiết bị">NV dụng cụ, trang thiết bị</option>
+                                                <option value="NV khác">NV khác</option>
+                                            </select>
+                                            <label for="chuyennganh">Chức vụ <b style="color:red; font-size: 10px;">(*)</b></label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="form-floating">
+                                            <input type="text" class="form-control" id="hoten" placeholder="Họ tên nhân viên" name="fHoTen" required>
+                                            <label for="hoten">Họ tên nhân viên <b style="color:red; font-size: 10px;">(*)</b></label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-floating">
+                                            <input type="date" class="form-control" id="ngaysinh" placeholder="Ngày sinh" name="fNgaySinh" required>
+                                            <label for="ngaysinh">Ngày sinh <b style="color:red; font-size: 10px;">(*)</b></label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-5">
+                                        <div class="form-floating">
+                                            <input type="email" class="form-control" id="email" placeholder="Email" name="fEmail" required>
+                                            <label for="email">Email <b style="color:red; font-size: 10px;">(*)</b></label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-floating">
+                                            <input type="tel" class="form-control" id="sdt" placeholder="Số điện thoại" name="fSDT" required>
+                                            <label for="sdt">Số điện thoại <b style="color:red; font-size: 10px;">(*)</b></label>
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="form-floating">
+                                            <textarea class="form-control" placeholder="Địa chỉ" id="floatingTextarea" name="fDiaChi" style="height: 100px;" required></textarea>
+                                            <label for="floatingTextarea">Địa chỉ <b style="color:red; font-size: 10px;">(*)</b></label>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 text-center">
+                                        <button type="reset" class="btn btn-secondary">Hủy</button>
+                                        <button type="submit" class="btn btn-primary">THÊM</button>
+                                    </div>
+                                </form><!-- End floating Labels Form -->
+
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+</main><!-- End #main -->

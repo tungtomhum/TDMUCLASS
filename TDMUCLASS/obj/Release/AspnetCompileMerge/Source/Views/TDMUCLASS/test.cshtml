@@ -1,0 +1,58 @@
+﻿
+@{
+    ViewBag.Title = "test";
+    Layout = "~/Views/Shared/_LayoutStudent.cshtml";
+}
+<div class="container text-center">
+    <table class="table table-sm table-bordered m-0 p-0 user-select-none">
+        <!-- Các thẻ ngày trong tuần -->
+        <tr>
+            <td class="text-center align-middle clickable dieuhuong ng-star-inserted">
+                <span class="text-primary ng-star-inserted"><i class="fas fa-long-arrow-alt-left"></i> Trước</span>
+            </td>
+            @for (int i = 2; i <= 8; i++)
+            {
+                <td class="text-nowrap align-middle clickable bg-primary ng-star-inserted">
+                    <span class="text-white ng-star-inserted"> Thứ @i</span>
+                </td>
+            }
+            <td class="text-nowrap align-middle clickable dieuhuong ng-star-inserted">
+                <span class="text-primary ng-star-inserted"> Sau<i class="fas fa-long-arrow-alt-right ml-1"></i></span>
+            </td>
+        </tr>
+        <tbody>
+            <!-- Các dòng dữ liệu -->
+            @for (int i = 1; i <= 15; i++)
+            {
+                <tr class="ng-star-inserted">
+                    <td class="bg-primary text-white text-center align-middle text-nowrap ng-star-inserted" style="padding: 0px 20px;">
+                        Tiết @i
+                    </td>
+                    @for (int j = 2; j <= 8; j++)
+                    {
+                        <td tabindex="1" class="p-1 ng-star-inserted" style="width: 13%;"></td>
+                    }
+                    <td class="bg-primary text-white text-center align-middle text-nowrap" style="width: 4.5%; overflow: hidden; padding: 5px 20px;">
+                        @(i == 1 ? "7:00" : i == 2 ? "7:51" : i == 3 ? "9:00" : i == 4 ? "9:51" : i == 5 ? "10:41" : i == 6 ? "12:30" : i == 7 ? "13:21" : i == 8 ? "14:30" : i == 9 ? "15:21" : i == 10 ? "16:11" : i == 11 ? "17:30" : i == 12 ? "18:21" : i == 13 ? "19:11" : i == 14 ? "20:01" : "21:00")
+                    </td>
+                </tr>
+            }
+        </tbody>
+        <!-- Các thẻ ngày trong tuần -->
+        <tr>
+            <td class="text-center align-middle clickable dieuhuong ng-star-inserted">
+                <span class="text-primary ng-star-inserted"><i class="fas fa-long-arrow-alt-left"></i> Trước</span>
+            </td>
+            @for (int i = 2; i <= 8; i++)
+            {
+                <td class="text-nowrap align-middle clickable bg-primary ng-star-inserted">
+                    <span class="text-white ng-star-inserted"> Thứ @i</span>
+                </td>
+            }
+            <td class="text-nowrap align-middle clickable dieuhuong ng-star-inserted">
+                <span class="text-primary ng-star-inserted"> Sau<i class="fas fa-long-arrow-alt-right ml-1"></i></span>
+            </td>
+        </tr>
+    </table>
+    <!-- Các dòng khác tương tự -->
+</div>

@@ -1,0 +1,127 @@
+﻿@model IEnumerable<TDMUCLASS.Models.SINHVIEN>
+
+@{
+    ViewBag.Title = "Danh sách sinh viên";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutHome.cshtml";
+    // Sort the data by NgayBD (start date)
+    var sortedModel = Model.OrderBy(item => item.HoTen);
+}
+@*Xây dựn một helper tùy chỉnh để cắt độ dài chuỗi*@
+@helper Truncate(string s, int length)
+{
+    if (s.Length < length)
+    {
+        @s
+    }
+    else
+    {
+        @s.Substring(0, length)<text>...</text>
+    }
+
+}
+
+
+
+<main id="main" class="main">
+
+    <div class="pagetitle">
+        <h1>DANH SÁCH SINH VIÊN</h1>
+        <nav>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="~/Admin/Home/Home">Admin</a></li>
+                <li class="breadcrumb-item">Home</li>
+                <li class="breadcrumb-item active">Danh sách Sinh viên</li>
+            </ol>
+        </nav>
+    </div><!-- End Page Title -->
+
+    <section class="section">
+        <div class="row">
+            <div class="col-lg-12">
+
+                <div class="card">
+                    <div class="card-body p-3">
+                        <p>
+                            @Html.ActionLink("Thêm sinh viên", "AddSV")
+                        </p>
+                        <!-- Table with stripped rows -->
+                        <table class="table datatable p-5" style="font-size: small;">
+                            <thead>
+                                <tr>
+                                    <th>MSSV</th>
+                                    <th>Họ & Tên</th>
+                                    <th>Lớp</th>
+                                    <th data-type="date" data-format="YYYY/DD/MM">Ngày sinh</th>
+                                    <th>Email</th>
+                                    <th>SĐT</th>
+                                    <th>Ngành</th>
+                                    <th>Địa chỉ</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var sv in sortedModel)
+                                {
+                                    <tr>
+                                        <td>@sv.MaSinhVien</td>
+                                        <td>@sv.HoTen</td>
+                                        <td>@sv.Lop</td>
+                                        <td>@Html.Raw(Truncate(Convert.ToString(sv.NgaySinh), 10).ToString())</td>
+                                        <td>@Html.Raw(Truncate(sv.Email, 8).ToString())</td>
+                                        <td>@sv.DienThoai</td>
+                                        <td>@sv.ChuyenNganh</td>
+                                        <td>@Html.Raw(Truncate(sv.DiaChi, 15).ToString())</td>
+                                        <td>
+                                            <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#modal-@sv.MaSinhVien">
+                                                Xem chi tiết
+                                            </button>
+                                            <!-- Hien form thong tin -->
+                                            <div class="modal fade" id="modal-@sv.MaSinhVien" tabindex="-1">
+                                                <div class="modal-dialog modal-dialog-centered">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="text-center">THÔNG TIN SINH VIÊN</h5>
+                                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <div>
+
+                                                                <!-- Nội dung hiện ở đây-->
+                                                                <p><strong>Mã sinh viên:</strong> @sv.MaSinhVien</p>
+                                                                <p><strong>Họ tên:</strong> @sv.HoTen</p>
+                                                                <p><strong>Lớp:</strong> @sv.Lop</p>
+                                                                <p><strong>Ngày sinh:</strong>@String.Format("{0:yyyy-MM-dd}", sv.NgaySinh)</p>
+                                                                <p><strong>Email:</strong> @sv.Email</p>
+                                                                <p><strong>Số điện thoại:</strong> @sv.DienThoai</p>
+                                                                <p><strong>Chuyên ngành:</strong> @sv.ChuyenNganh</p>
+                                                                <p><strong>Địa chỉ:</strong> @sv.DiaChi</p>
+
+
+                                                            </div>
+                                                        </div>
+                                                        <!-- Inside your modal -->
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Trở lại</button>
+                                                            <a href="@Url.Action("DeleteSV", new { id = sv.MaSinhVien })" class="btn btn-danger" role="button">Xóa sinh viên</a>
+                                                            <a href="@Url.Action("EditSV", new { id = sv.MaSinhVien })" class="btn btn-warning" role="button">Sửa thông tin</a>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                            </div><!-- End Vertically centered Modal-->
+                                        </td>
+                                    </tr>
+                                }
+
+                            </tbody>
+                        </table>
+                        <!-- End Table with stripped rows -->
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+</main><!-- End #main -->

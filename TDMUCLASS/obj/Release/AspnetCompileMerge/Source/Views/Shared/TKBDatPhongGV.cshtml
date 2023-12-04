@@ -1,0 +1,42 @@
+﻿@model List<TDMUCLASS.Models.ThoiKhoaBieuViewModel>
+@* Xây dựn một helper tùy chỉnh để cắt độ dài chuỗi *@
+@helper Truncate(string s, int length)
+{
+    if (s.Length < length)
+    {
+        @s
+    }
+    else
+    {
+        @s.Substring(0, length)<text>...</text>
+    }
+}
+
+<div style="width: 90%; margin: 0px auto; padding: 30px 0px;;">
+    <h2>LỊCH ĐẶT PHÒNG</h2>
+    @if (Model != null && Model.Any())
+    {
+
+        <div class="row">
+            @foreach (var tkbItem in Model)
+            {
+                <div class="col-md-4" style="background-image: url('@Url.Content("~/img/khungdp.png")'); background-size: contain; background-repeat: no-repeat; background-position: center center;">
+
+                    <div class="p-5" style="margin: 10px 5px;">
+                        <p><b>Phòng Học:</b> @tkbItem.PhongHoc</p>
+                        <!-- Thông tin môn học -->
+                        <p title="@tkbItem.MoTaDP"><b>Mô tả:</b> @Html.Raw(Truncate(tkbItem.MoTaDP, 20).ToString())</p>
+                        <p><b>Từ ngày:</b> @tkbItem.TuNgay</p>
+                        <p><b>Đến ngày:</b> @tkbItem.DenNgay</p>
+                        <!-- Thêm thông tin khác nếu có -->
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <p>Không có lịch đặt phòng.</p>
+    }
+
+</div>

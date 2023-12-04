@@ -1,0 +1,68 @@
+﻿@*Xây dựn một helper tùy chỉnh để cắt độ dài chuỗi*@
+@helper Truncate(string s, int length)
+{
+    if (s.Length < length)
+    {
+        @s
+    }
+    else
+    {
+        @s.Substring(0, length)<text>...</text>
+    }
+}
+
+<style>
+    .ellipsis-text {
+        text-align: justify;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+</style>
+
+<div class="gioi-thieu-container" id="tintuc">
+    <h1 class="text-center gioi-thieu-title">TIN TỨC</h1>
+    <hr style="width: 90%; margin: 0 auto; height: 2px;">
+
+    <div class="row" style="width: 90%; margin: 0 auto; ">
+        @foreach (var tintuc in Model)
+        {
+            <div class="col-sm-6 col-md-6 col-lg-6 col-xs-12 sp my-div" style="padding: 20px 30px;">
+                <!-- Các phần tử tin tức ở đây -->
+                <div class="caption">
+                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                        <h5 style="text-align: justify; min-height: auto;">
+                            <a href="@tintuc.NoiDung" title="@tintuc.TenTT" id="tintucLink" class="tentin815 tieude">@tintuc.TenTT</a>
+                        </h5>
+                    </div>
+                </div>
+
+                <div class="caption">
+                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                        <img class="img-responsive new_item_img" alt="@tintuc.TenTT" src="~/img/@tintuc.AnhTT" onerror="this.onerror=null;this.src='~/img/@tintuc.AnhTT';">
+                        <span class="new_item_time"><i class="fa fa-clock-o"></i> @tintuc.NgayDang — <i class="fa fa-eye"></i> @tintuc.SoLuocXem</span><br>
+                        <p class="truncate new_item_desc ellipsis-text">
+                            @Html.Raw(Truncate(@tintuc.MoTa, 200).ToString())
+                        </p>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+        <a href="https://tdmu.edu.vn/tin-tuc" class="btn btn-primary">Xem thêm</a>
+</div>
+
+<script>
+    // Lắng nghe sự kiện click trên liên kết "TinTuc" trong navbar
+    $(document).ready(function () {
+        $('a[href="#tintuc"]').click(function (e) {
+            e.preventDefault(); // Ngăn chặn mặc định của liên kết
+            var target = $('#tintuc');
+            if (target.length) {
+                // Cuộn trang đến phần "tintuc" và đảm bảo nó hiển thị ngay dưới navbar
+                $('html, body').animate({
+                    scrollTop: target.offset().top - $('.navbar').outerHeight()
+                }, 100);
+            }
+        });
+    });
+</script>
