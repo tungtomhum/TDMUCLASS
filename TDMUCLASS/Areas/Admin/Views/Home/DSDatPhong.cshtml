@@ -64,11 +64,11 @@
                                         <td>@Html.Raw(Truncate(datphong.MoTa, 10).ToString())</td>
                                         <td>@datphong.TrangThai</td>
                                         <td>
-                                            <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#modal-@datphong.MaPhongHoc">
+                                            <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#modal-@datphong.MaDatPhong">
                                                 Xem chi tiết
                                             </button>
                                             <!-- Hien form thong tin -->
-                                            <div class="modal fade" id="modal-@datphong.MaPhongHoc" tabindex="-1">
+                                            <div class="modal fade" id="modal-@datphong.MaDatPhong" tabindex="-1">
                                                 <div class="modal-dialog modal-dialog-centered">
                                                     <div class="modal-content">
                                                         <div class="modal-header">

@@ -42,19 +42,23 @@ namespace TDMUCLASS.Areas.Admin.Controllers
         public ActionResult HoSo()
         {
             // Retrieve user information from the session
-            QUANLY admin = Session["Admin"] as QUANLY;
+            QUANLY admin = Session["Admin"] as QUANLY; // Retrieve QUANLY object
+
             if (admin != null)
             {
-                // Store user information in additional sessions
-                Session["Hoten"] = admin.HoTen;
-                Session["ChucVu"] = admin.ChucVu;
-                Session["AnhQL"] = admin.AnhQL;
+                // Fetch the updated user information from the database
+                var updatedKh = data.QUANLies.SingleOrDefault(n => n.MaQuanLy == admin.MaQuanLy);
 
-                // Return the view
-                return View();
+                if (updatedKh != null)
+                {
+                    // Update the session with the new information
+                    Session["Admin"] = updatedKh;
+
+                    // Pass the updated user information to the view
+                    return View(updatedKh);
+                }
             }
 
-            // If the user is not logged in, you might want to redirect them to the login page or handle it accordingly.
             return RedirectToAction("Login");
         }
 
@@ -432,6 +436,42 @@ namespace TDMUCLASS.Areas.Admin.Controllers
 
             return View(sv);
         }
+        [HttpGet]
+        public ActionResult DeleteSV(string id)
+        {
+            // Get the student from the database
+            var studentToDelete = data.SINHVIENs.SingleOrDefault(sv => sv.MaSinhVien == id);
+
+            if (studentToDelete != null)
+            {
+                // Find and delete related records in DANGKYMONHOCs table
+                var dkmhsToDelete = data.DANGKYMONHOCs.Where(dk => dk.MaSinhVien == id);
+
+                // Delete each related DANGKYMONHOC record
+                foreach (var dkmh in dkmhsToDelete)
+                {
+                    data.DANGKYMONHOCs.DeleteOnSubmit(dkmh);
+                }
+
+                // Find and delete related TAIKHOAN record
+                var taiKhoanToDelete = data.TAIKHOANs.SingleOrDefault(tk => tk.MaSinhVien == id);
+                if (taiKhoanToDelete != null)
+                {
+                    data.TAIKHOANs.DeleteOnSubmit(taiKhoanToDelete);
+                }
+
+                // Remove the student from the database
+                data.SINHVIENs.DeleteOnSubmit(studentToDelete);
+
+                // Save changes to the database
+                data.SubmitChanges();
+            }
+
+            // Redirect to the list of students after deletion
+            return RedirectToAction("QLSinhVien");
+        }
+
+
 
 
 
@@ -500,6 +540,57 @@ namespace TDMUCLASS.Areas.Admin.Controllers
                 return RedirectToAction("QLNhanVien");
             }
             return View();
+        }
+        [HttpGet]
+        public ActionResult EditMK(string id)
+        {
+            // Assuming "admin" is stored in session
+            string adminSession = Session["Admin"] as string;
+
+            // Check if the user is logged in as admin
+            if (string.IsNullOrEmpty(adminSession) || adminSession != "admin")
+            {
+                // Redirect to a login page or show an unauthorized view
+                return RedirectToAction("Login");
+            }
+
+            var sp = data.QUANLies.SingleOrDefault(n => n.MaQuanLy == id);
+            if (sp == null)
+            {
+                Response.StatusCode = 404;
+                return null;
+            }
+
+            return View(sp);
+        }
+
+        [HttpPost]
+        [ValidateInput(false)]
+        public ActionResult EditMK(FormCollection f)
+        {
+            // Assuming "admin" is stored in session
+            string adminSession = Session["Admin"] as string;
+
+            // Check if the user is logged in as admin
+            if (string.IsNullOrEmpty(adminSession) || adminSession != "admin")
+            {
+                // Redirect to a login page or show an unauthorized view
+                return RedirectToAction("Login");
+            }
+
+            var kh = data.QUANLies.SingleOrDefault(n => n.MaQuanLy == f["fmakh"]);
+
+            if (ModelState.IsValid)
+            {
+                kh.MatKhau = f["fmk"];
+
+                data.SubmitChanges();
+
+                // Redirect to the HoSo action after successfully changing the password
+                return RedirectToAction("HoSo");
+            }
+
+            return View(kh);
         }
 
 

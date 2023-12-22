@@ -102,7 +102,7 @@
                                                         <!-- Inside your modal -->
                                                         <div class="modal-footer">
                                                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Trở lại</button>
-                                                            <a href="@Url.Action("DeleteSV", new { id = sv.MaSinhVien })" class="btn btn-danger" role="button">Xóa sinh viên</a>
+                                                            <a href="@Url.Action("DeleteSV", new { id = sv.MaSinhVien })" class="btn btn-danger" role="button" onclick="return confirm('Bạn chắc chắn muốn xóa sinh viên này chứ ?')">Xóa sinh viên</a>
                                                             <a href="@Url.Action("EditSV", new { id = sv.MaSinhVien })" class="btn btn-warning" role="button">Sửa thông tin</a>
                                                         </div>
 

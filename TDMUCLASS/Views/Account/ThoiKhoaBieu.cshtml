@@ -18,10 +18,13 @@
 
 <div class="m-2">
     @Html.Action("TKBDatPhongSV", "Account")
-
 </div>
 
 <div class="container text-center">
+    <div class="d-flex justify-content-end">
+        <a href="@Url.Action("DangKyMonHoc", "Account")" class="btn btn-outline-dark p-3">ĐĂNG KÝ MÔN HỌC</a>
+    </div>
+
     <h1 style="text-align: center;">THỜI KHÓA BIỂU</h1>
     <table class="table table-sm table-bordered m-0 p-0 user-select-none">
         <!-- Các thẻ ngày trong tuần -->

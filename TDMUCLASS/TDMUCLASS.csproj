@@ -143,6 +143,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>dbTDMUCLASS.dbml</DependentUpon>
     </Compile>
+    <Compile Include="Models\LopHocViewModel.cs" />
     <Compile Include="Models\QuanLyTTBViewModel.cs" />
     <Compile Include="Models\SuLyModel.cs" />
     <Compile Include="Models\ThoiKhoaBieuViewModel.cs" />
@@ -2878,6 +2879,7 @@
     <Content Include="Views\Account\NhanVien.cshtml" />
     <Content Include="Views\Shared\NavPartialUserNV.cshtml" />
     <Content Include="Views\Account\SuCoNV.cshtml" />
+    <Content Include="Views\Account\DangKyMonHoc.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

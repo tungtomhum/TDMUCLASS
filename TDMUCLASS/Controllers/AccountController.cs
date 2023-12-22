@@ -391,8 +391,8 @@ namespace TDMUCLASS.Controllers
             List<QUANLY_TRANGTHIETBI> temporaryList = new List<QUANLY_TRANGTHIETBI>();
 
             // Chuỗi kết nối đến cơ sở dữ liệu SQL Server
-            string connectionString = "Data Source=SQL8006.site4now.net;Initial Catalog=db_aa22c6_tdmuclass;User ID=db_aa22c6_tdmuclass_admin;Password=tdmuclass123";
-            //string connectionString = "Data Source=LAPTOP-SD6JFUCG\\MSSQLSERVER01;Initial Catalog=TDMUCLASS;Integrated Security=True";
+            //string connectionString = "Data Source=SQL8006.site4now.net;Initial Catalog=db_aa22c6_tdmuclass;User ID=db_aa22c6_tdmuclass_admin;Password=tdmuclass123";
+            string connectionString = "Data Source=LAPTOP-SD6JFUCG;Initial Catalog=TDMUCLASS;Integrated Security=True";
 
             // Tạo kết nối đến cơ sở dữ liệu
             using (SqlConnection connection = new SqlConnection(connectionString))
@@ -728,6 +728,72 @@ namespace TDMUCLASS.Controllers
         {
             // Kiểm tra xem Session["LoggedInUserId"] có giá trị hay không
             return Session["LoggedInUserId"] != null;
+        }
+        public ActionResult DangKyMonHoc()
+        {
+            // Fetch data needed for the view and pass it to the view
+            var lopHocData = FetchLopHocData();
+            return View(lopHocData);
+        }
+
+        private List<LopHocViewModel> FetchLopHocData()
+        {
+            // Lấy mã sinh viên từ session hoặc từ đâu đó
+            string maSinhVien = Session["maSinhVienOrGiangVien"] as string;
+
+            // Lấy danh sách các lớp học chưa được đăng ký bởi sinh viên
+            var lopHocData = (from lh in db.LOPHOCs
+                              join mh in db.MONHOCs on lh.MaMonHoc equals mh.MaMonHoc
+                              where !db.DANGKYMONHOCs.Any(dk => dk.MaMonHoc == lh.MaMonHoc && dk.MaSinhVien == maSinhVien)
+                              select new LopHocViewModel
+                              {
+                                  MaLopHoc = lh.MaLopHoc,
+                                  MaMonHoc = lh.MaMonHoc,
+                                  SoLuongSV = Convert.ToInt32(lh.SoLuongSV),
+                                  MaGiangVien = lh.MaGiangVien,
+                                  TenMonHoc = mh.TenMonHoc
+                              }).ToList();
+
+            return lopHocData;
+        }
+
+        [HttpPost]
+        public ActionResult DangKyMonHoc(string maLopHoc)
+        {
+            // Lấy thông tin của sinh viên đang đăng nhập (giả sử thông tin này đã được lưu trong Session)
+            string maSinhVien = Session["maSinhVienOrGiangVien"] as string;
+
+            // Kiểm tra mã sinh viên có tồn tại không
+            if (string.IsNullOrEmpty(maSinhVien))
+            {
+                // Redirect hoặc xử lý khi không tìm thấy thông tin đăng nhập
+                return RedirectToAction("Login");
+            }
+
+            // Lấy thông tin về lớp học theo maLopHoc
+            var lopHoc = db.LOPHOCs.FirstOrDefault(lh => lh.MaLopHoc == maLopHoc);
+
+            // Kiểm tra lớp học có tồn tại không
+            if (lopHoc != null)
+            {
+                // Tạo đối tượng DANGKYMONHOC và thêm vào cơ sở dữ liệu
+                var dangKyMonHoc = new DANGKYMONHOC
+                {
+                    MaSinhVien = maSinhVien,
+                    MaMonHoc = lopHoc.MaMonHoc,
+                    NgayGioDangKy = DateTime.Now
+                    // Các thông tin khác nếu có
+                };
+
+                db.DANGKYMONHOCs.InsertOnSubmit(dangKyMonHoc);
+                db.SubmitChanges();
+
+                // Redirect hoặc thực hiện các hành động khác sau khi đăng ký thành công
+                return RedirectToAction("ThoiKhoaBieu");
+            }
+
+            // Trả về trang 404 hoặc trang thông báo lỗi nếu không tìm thấy lớp học
+            return HttpNotFound();
         }
 
     }

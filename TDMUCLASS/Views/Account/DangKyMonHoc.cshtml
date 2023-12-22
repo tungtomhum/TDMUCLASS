@@ -1,0 +1,56 @@
+﻿@model List<TDMUCLASS.Models.LopHocViewModel>
+
+@{
+    ViewBag.Title = "DangKyMonHoc";
+    Layout = "~/Views/Shared/_LayoutStudent.cshtml";
+}
+
+<div style="padding:30px;">
+    <p class="btn btn-outline-light">
+        @Html.ActionLink("Trở lại", "ThoiKhoaBieu")
+    </p>
+    <h2 style="text-align:center;padding:20px;">ĐĂNG KÝ MÔN HỌC</h2>
+
+    <table class="table" style="height:auto;">
+        <thead>
+            <tr class="noidung">
+                <th>
+                    Mã môn học
+                </th>
+                <th>
+                    Mã lớp
+                </th>
+                <th>
+                    Tên môn học
+                </th>
+                <th>
+                    Số lượng
+                </th>
+                <th>
+                    Giảng viên
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var lopHoc in Model)
+            {
+                <form method="post" action="@Url.Action("DangKyMonHoc", "Account")">
+                    @Html.Hidden("maLopHoc", lopHoc.MaLopHoc)
+
+                <tr style="height: 10px;"></tr>
+                <tr class="noidung">
+                    <td>@lopHoc.MaMonHoc</td>
+                    <td>@lopHoc.MaLopHoc</td>
+                    <td>@lopHoc.TenMonHoc</td>
+                    <td>@lopHoc.SoLuongSV</td>
+                    <td>@lopHoc.MaGiangVien</td>
+                    <td>
+                        <button type="submit" class="btn btn-success">Đăng ký</button>
+                    </td>
+                </tr>
+                </form>
+            }
+        </tbody>
+    </table>
+</div>
